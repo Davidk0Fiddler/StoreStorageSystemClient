@@ -1,0 +1,809 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link
+      rel="stylesheet"
+      href="../../../../node_modules/bootstrap/dist/css/bootstrap.min.css"
+    />
+
+    <link
+      rel="stylesheet"
+      href="../../../../node_modules/bootstrap-icons/font/bootstrap-icons.css"
+    />
+    <link rel="stylesheet" href="../../../shared/styles/backgroundShapes.css" />
+    <link rel="stylesheet" href="../../../shared/styles/modernAlertStyle.css" />
+
+    <title>Áru Panel</title>
+
+    <style>
+      .expiring-soon {
+        background-color: rgba(255, 134, 134, 0.3);
+        --bs-table-bg: rgba(255, 134, 134, 0.3);
+      }
+
+      .expired {
+        background-color: rgba(255, 10, 10, 0.7);
+        --bs-table-bg: rgba(255, 10, 10, 0.7);
+        color: white;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="background-shapes">
+      <div class="shape shape-1"></div>
+      <div class="shape shape-2"></div>
+      <div class="shape shape-3"></div>
+      <div class="shape shape-4"></div>
+    </div>
+    <!--Visszajelzés felhívások-->
+    <section
+      id="alert-container"
+      class="position-fixed top-0 start-50 translate-middle-x mt-3"
+      style="z-index: 9999"
+    >
+      <div id="liveAlertPlaceholder"></div>
+    </section>
+
+    <!--Betöltési pörgő-->
+    <section id="spinning-overlay" class="d-none">
+      <div class="position-absolute top-50 start-50 translate-middle">
+        <div
+          class="spinner-border text-primary"
+          style="width: 3rem; height: 3rem"
+          role="status"
+        >
+          <span class="visually-hidden">Loading...</span>
+        </div>
+      </div>
+    </section>
+    <!--Content container-->
+    <section>
+      <div class="container-fluid py-4" id="content-container">
+        <!-- Fejléc -->
+        <div class="d-flex justify-content-between align-items-center mb-3">
+          <div>
+            <h3 class="mb-0">
+              <i class="bi bi-box-seam me-2"></i>
+              Raktárkészlet
+            </h3>
+          </div>
+          <div class="g-2 d-flex align-items-center">
+            <button
+              class="btn btn-outline-danger mt-3 me-3 py-2 px-3 d-none"
+              id="stock-clear-filter-button"
+            >
+              Szűrés eltávolítása
+            </button>
+            <button
+              class="btn btn-outline-primary mt-3 me-3 py-2 px-3"
+              data-bs-toggle="modal"
+              data-bs-target="#stock-filter-modal"
+            >
+              <i class="bi bi-funnel me-2"></i>
+              Szűrés
+            </button>
+
+            <button
+              class="btn btn-danger mt-3 me-3 py-2 px-3 fw-bold"
+              id="back-to-menu-button"
+            >
+              Vissza a menübe
+            </button>
+          </div>
+        </div>
+
+        <!-- Táblázat -->
+        <div class="card shadow-sm">
+          <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0">
+              <tbody id="stock-table-body">
+                <!-- Ide kerülnek a sorok -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Show Stock Detail Modals -->
+    <section>
+      <div class="modal fade" id="stock-details-modal" tabindex="-1">
+        <div class="modal-dialog modal-xl modal-dialog-centered">
+          <div class="modal-content border-0 shadow-lg rounded-4">
+            <div class="modal-header bg-primary text-white">
+              <h4 class="modal-title">
+                <i class="bi bi-box-seam me-2"></i>
+                Áru részletei
+              </h4>
+              <button
+                class="btn-close btn-close-white"
+                data-bs-dismiss="modal"
+                id="close-stock-details-modal-btn"
+              ></button>
+            </div>
+
+            <div class="modal-body p-2">
+              <div class="row g-4">
+                <div class="col-lg-4">
+                  <div class="card border-0 shadow-sm h-100">
+                    <div class="card-body text-center">
+                      <img
+                        id="modal-product-image"
+                        src="https://placehold.co/300"
+                        class="img-fluid rounded-4 border shadow-sm mb-4"
+                        style="max-height: 300px; object-fit: contain"
+                      />
+                      <h3 id="modal-product-name" class="fw-bold"></h3>
+                      <p
+                        id="modal-product-brand-and-type"
+                        class="text-muted mb-4"
+                      ></p>
+                      <div
+                        class="d-flex flex-wrap justify-content-center gap-2 mt-3"
+                      >
+                        <span
+                          id="modal-product-active"
+                          class="badge bg-success fs-6 px-4 py-2"
+                        ></span>
+
+                        <span
+                          id="modal-product-discount"
+                          class="badge bg-danger fs-6 px-4 py-3"
+                        >
+                          <i class="bi bi-percent me-1"></i>
+                          Akciós
+                        </span>
+
+                        <span
+                          id="modal-product-deposit"
+                          class="badge bg-warning text-dark fs-6 px-4 py-3 d-none"
+                        >
+                          <i class="bi bi-arrow-repeat me-1"></i>
+                          Visszaváltható
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-lg-8">
+                  <div class="card border-0 shadow-sm h-100">
+                    <div class="card-header bg-light py-3">
+                      <h5 class="mb-0">
+                        <i class="bi bi-info-circle me-2"></i>Áru adatai
+                      </h5>
+                    </div>
+                    <div class="card-body">
+                      <div class="row g-2">
+                        <div class="col-md-6">
+                          <div class="border rounded-3 p-3 h-100 bg-light">
+                            <small class="text-muted d-block">Vonalkód</small>
+                            <div id="modal-barcode" class="fs-5 fw-bold"></div>
+                          </div>
+                        </div>
+
+                        <div class="col-md-6">
+                          <div class="border rounded-3 p-3 h-100 bg-light">
+                            <small class="text-muted d-block"
+                              >Belső azonosító</small
+                            >
+                            <div id="modal-sku" class="fs-5 fw-bold"></div>
+                          </div>
+                        </div>
+
+                        <div class="col-md-6">
+                          <div class="border rounded-3 p-3 h-100 bg-light">
+                            <small class="text-muted d-block">Mennyiség</small>
+                            <div
+                              id="modal-quantity"
+                              class="fs-4 fw-bold text-primary"
+                            ></div>
+                          </div>
+                        </div>
+
+                        <div class="col-md-6">
+                          <div class="border rounded-3 p-3 h-100 bg-light">
+                            <small class="text-muted d-block"
+                              >Bolti mennyiség</small
+                            >
+                            <div
+                              class="d-flex justify-content-between align-items-center"
+                            >
+                              <div
+                                id="modal-shop-quantity"
+                                class="fs-4 fw-bold"
+                              ></div>
+
+                              <button
+                                id="edit-shopquantity-btn"
+                                class="d-none btn btn-outline-primary btn-sm"
+                                type="button"
+                                onclick="OpenUpdateShopQuantityModal()"
+                              >
+                                <i class="bi bi-pencil-fill"></i>
+                              </button>
+                            </div>
+                          </div>
+                        </div>
+
+                        <div class="col-md-6">
+                          <div class="border rounded-3 p-3 h-100 bg-light">
+                            <small class="text-muted d-block"
+                              >Jelenlegi ár</small
+                            >
+                            <div
+                              class="d-flex justify-content-between align-items-center"
+                            >
+                              <div
+                                id="modal-current-price"
+                                class="fs-4 fw-bold text-success"
+                              ></div>
+
+                              <button
+                                id="edit-price-btn"
+                                class="d-none btn btn-outline-primary btn-sm"
+                                type="button"
+                                onclick="OpenUpdatePriceModal()"
+                              >
+                                <i class="bi bi-pencil-fill"></i>
+                              </button>
+                            </div>
+                          </div>
+                        </div>
+
+                        <div class="col-md-6">
+                          <div class="border rounded-3 p-3 h-100 bg-light">
+                            <small class="text-muted d-block"
+                              >Beszerzési ár</small
+                            >
+                            <div
+                              id="modal-import-price"
+                              class="fs-4 fw-bold"
+                            ></div>
+                          </div>
+                        </div>
+
+                        <div class="col-md-6">
+                          <div class="border rounded-3 p-3 h-100 bg-light">
+                            <small class="text-muted d-block"
+                              >Számla azonosító</small
+                            >
+                            <div id="modal-invoice" class="fs-6"></div>
+                          </div>
+                        </div>
+
+                        <div class="col-md-6">
+                          <div class="border rounded-3 p-3 h-100 bg-light">
+                            <small class="text-muted d-block"
+                              >Szállítólevél</small
+                            >
+                            <div id="modal-transit" class="fs-6"></div>
+                          </div>
+                        </div>
+
+                        <div class="col-md-6">
+                          <div class="border rounded-3 p-3 h-100 bg-light">
+                            <small class="text-muted d-block"
+                              >Lejárati dátum</small
+                            >
+                            <div
+                              id="modal-expiration"
+                              class="fw-bold text-danger"
+                            ></div>
+                          </div>
+                        </div>
+
+                        <div class="col-md-6">
+                          <div class="border rounded-3 p-3 h-100 bg-light">
+                            <small class="text-muted d-block">Beérkezett</small>
+                            <div id="modal-recieved" class=""></div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Filter stocks modal -->
+    <section>
+      <div
+        class="modal fade"
+        id="stock-filter-modal"
+        tabindex="-1"
+        aria-labelledby="stock-filter-modal-label"
+      >
+        <div class="modal-dialog modal-dialog-centered">
+          <div
+            class="modal-content border-0 shadow-lg rounded-4 overflow-hidden"
+          >
+            <!-- Fejléc -->
+            <div class="modal-header border-0 px-4 pt-4 pb-3">
+              <div>
+                <div class="d-flex align-items-center gap-2 mb-1">
+                  <div
+                    class="d-flex align-items-center justify-content-center bg-primary-subtle text-primary rounded-3"
+                    style="width: 40px; height: 40px"
+                  >
+                    <i class="bi bi-funnel fs-5"></i>
+                  </div>
+
+                  <h5
+                    class="modal-title fw-semibold mb-0"
+                    id="stock-filter-modal-label"
+                  >
+                    Áru szűrése
+                  </h5>
+                </div>
+
+                <p class="text-body-secondary small mb-0 ms-5">
+                  Szűrje le a készletet a kívánt feltétel alapján.
+                </p>
+              </div>
+
+              <button
+                type="button"
+                class="btn-close"
+                data-bs-dismiss="modal"
+                aria-label="Bezárás"
+              ></button>
+            </div>
+
+            <!-- Tartalom -->
+            <div class="modal-body px-4 py-3">
+              <div class="p-3 bg-body-tertiary border rounded-4">
+                <!-- Szűrés típusa -->
+                <div class="mb-3">
+                  <label
+                    for="stock-search-filter-select"
+                    class="form-label fw-semibold small"
+                  >
+                    Keresés szűrő
+                  </label>
+
+                  <select
+                    id="stock-search-filter-select"
+                    class="form-select rounded-3"
+                  >
+                    <option value="nev" default>Név alapján</option>
+                    <option value="vonalkod">Vonalkód alapján</option>
+                    <option value="sku">Belső azonosító alapján</option>
+                    <option value="termektipus">Terméktípus alapján</option>
+                    <option value="termekmeret">Termékméret alapján</option>
+                    <option value="marka">Márka alapján</option>
+                  </select>
+                </div>
+
+                <!-- Szűrés értéke -->
+                <div>
+                  <label
+                    for="stock-search-filter-input"
+                    id="stock-search-filter-input-label"
+                    class="form-label fw-semibold small"
+                  >
+                    Szűrés terméknév alapján:
+                  </label>
+
+                  <div class="input-group">
+                    <span
+                      class="input-group-text bg-body border-end-0 rounded-start-3"
+                    >
+                      <i class="bi bi-search text-body-secondary"></i>
+                    </span>
+
+                    <input
+                      type="text"
+                      id="stock-search-filter-input"
+                      class="form-control border-start-0 rounded-end-3"
+                    />
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Lábléc -->
+            <div class="modal-footer border-0 bg-body-tertiary px-4 py-3">
+              <button
+                type="button"
+                class="btn btn-light border rounded-3 px-3"
+                data-bs-dismiss="modal"
+              >
+                <i class="bi bi-x-lg me-1"></i>
+                Mégse
+              </button>
+
+              <button
+                type="button"
+                class="btn btn-primary rounded-3 px-4"
+                id="stock-filter-button"
+                data-bs-dismiss="modal"
+              >
+                <i class="bi bi-funnel me-1"></i>
+                Szűrés
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Update price modal -->
+    <section>
+      <div class="modal fade" id="update-price-modal" tabindex="-1">
+        <div class="modal-dialog modal-xl modal-dialog-centered">
+          <div class="modal-content border-0 shadow-lg rounded-4">
+            <div class="modal-header bg-primary text-white">
+              <h5 class="modal-title">
+                <i class="bi bi-percent me-2"></i>
+                Ár módosítása
+              </h5>
+
+              <button
+                class="btn-close btn-close-white"
+                data-bs-dismiss="modal"
+              ></button>
+            </div>
+
+            <div class="modal-body p-4">
+              <h3
+                id="update-price-product-name"
+                class="text-center fw-bold mb-4"
+              ></h3>
+
+              <div class="row g-4">
+                <!-- ================= LEFT ================= -->
+
+                <div class="col-lg-4">
+                  <!-- Jelenlegi ár -->
+
+                  <div class="card border-0 bg-success text-white shadow mb-3">
+                    <div class="card-body text-center py-4">
+                      <div class="text-uppercase opacity-75">Jelenlegi ár</div>
+
+                      <div id="update-current-price" class="display-4 fw-bold">
+                        0 Ft
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- Új ár -->
+
+                  <div class="card border-primary border-2 shadow-sm">
+                    <div class="card-body">
+                      <div class="text-center mb-3">
+                        <div class="text-muted">Új ár</div>
+                      </div>
+
+                      <div class="input-group input-group-lg">
+                        <input
+                          id="update-new-price"
+                          class="form-control text-center fw-bold fs-2"
+                          type="number"
+                          min="1"
+                        />
+
+                        <span class="input-group-text"> Ft </span>
+                      </div>
+
+                      <div
+                        id="update-price-difference"
+                        class="text-center fw-bold mt-3"
+                      ></div>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- ================= RIGHT ================= -->
+
+                <div class="col-lg-8">
+                  <!-- Információ -->
+
+                  <div class="row g-3 mb-4">
+                    <div class="col">
+                      <div class="card bg-light border-0">
+                        <div class="card-body text-center">
+                          <small class="text-muted"> Beszerzési ár </small>
+
+                          <div
+                            id="update-import-price"
+                            class="fs-2 fw-bold"
+                          ></div>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div class="col">
+                      <div class="card bg-light border-0">
+                        <div class="card-body text-center">
+                          <small class="text-muted"> ÁFA </small>
+
+                          <div id="update-vat" class="fs-2 fw-bold"></div>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div class="col">
+                      <div class="card bg-light border-0">
+                        <div class="card-body text-center">
+                          <small class="text-muted"> Jelenlegi árrés </small>
+
+                          <div
+                            id="update-current-margin"
+                            class="fs-2 fw-bold"
+                          ></div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- Gyorsgombok -->
+
+                  <h6 class="fw-bold mb-3">Gyors árrések</h6>
+
+                  <div class="row g-2 mb-4">
+                    <div class="col-3">
+                      <button
+                        class="btn btn-outline-primary w-100 py-3 margin-btn"
+                        data-margin="10"
+                      >
+                        10%
+                      </button>
+                    </div>
+                    <div class="col-3">
+                      <button
+                        class="btn btn-outline-primary w-100 py-3 margin-btn"
+                        data-margin="15"
+                      >
+                        15%
+                      </button>
+                    </div>
+                    <div class="col-3">
+                      <button
+                        class="btn btn-outline-primary w-100 py-3 margin-btn"
+                        data-margin="20"
+                      >
+                        20%
+                      </button>
+                    </div>
+                    <div class="col-3">
+                      <button
+                        class="btn btn-outline-primary w-100 py-3 margin-btn"
+                        data-margin="25"
+                      >
+                        25%
+                      </button>
+                    </div>
+
+                    <div class="col-3">
+                      <button
+                        class="btn btn-outline-primary w-100 py-3 margin-btn"
+                        data-margin="30"
+                      >
+                        30%
+                      </button>
+                    </div>
+                    <div class="col-3">
+                      <button
+                        class="btn btn-outline-primary w-100 py-3 margin-btn"
+                        data-margin="35"
+                      >
+                        35%
+                      </button>
+                    </div>
+                    <div class="col-3">
+                      <button
+                        class="btn btn-outline-primary w-100 py-3 margin-btn"
+                        data-margin="40"
+                      >
+                        40%
+                      </button>
+                    </div>
+                    <div class="col-3">
+                      <button
+                        class="btn btn-outline-primary w-100 py-3 margin-btn"
+                        data-margin="50"
+                      >
+                        50%
+                      </button>
+                    </div>
+                  </div>
+
+                  <!-- Új árrés -->
+
+                  <h6 class="fw-bold mb-3">Új árrés</h6>
+
+                  <div class="input-group input-group-lg">
+                    <button
+                      class="btn btn-outline-secondary px-4"
+                      id="margin-minus"
+                    >
+                      <i class="bi bi-dash-lg"></i>
+                    </button>
+
+                    <input
+                      id="update-margin"
+                      class="form-control text-center fw-bold fs-3"
+                      type="number"
+                      step="0.1"
+                    />
+
+                    <span class="input-group-text"> % </span>
+
+                    <button
+                      class="btn btn-outline-secondary px-4"
+                      id="margin-plus"
+                    >
+                      <i class="bi bi-plus-lg"></i>
+                    </button>
+                  </div>
+
+                  <small class="text-muted mt-2 d-block">
+                    Az árrés vagy az új ár módosításakor a másik érték
+                    automatikusan frissül.
+                  </small>
+                </div>
+              </div>
+            </div>
+
+            <div class="modal-footer">
+              <button
+                class="btn btn-outline-secondary btn-lg"
+                data-bs-dismiss="modal"
+              >
+                Mégse
+              </button>
+
+              <button id="save-price-btn" class="btn btn-primary btn-lg px-5">
+                <i class="bi bi-check-lg me-2"></i>
+                Mentés
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Update shopQuantity modal -->
+    <section>
+      <div
+        class="modal fade"
+        id="change-shop-quantity-modal"
+        tabindex="-1"
+        aria-labelledby="change-shop-quantity-modal-label"
+        aria-hidden="true"
+      >
+        <div class="modal-dialog modal-dialog-centered">
+          <div class="modal-content border-0 shadow-lg rounded-4">
+            <!-- Header -->
+            <div class="modal-header border-0 px-4 pt-4 pb-2">
+              <div>
+                <div class="text-secondary small fw-semibold">
+                  BOLTI KÉSZLET MÓDOSÍTÁSA
+                </div>
+
+                <h4
+                  class="modal-title fw-bold mt-1"
+                  id="change-shop-quantity-modal-label"
+                >
+                  Mennyiség módosítása
+                </h4>
+              </div>
+
+              <button
+                type="button"
+                class="btn-close"
+                data-bs-dismiss="modal"
+                aria-label="Bezárás"
+              ></button>
+            </div>
+
+            <!-- Body -->
+            <div class="modal-body px-4 py-3">
+              <!-- Termék neve -->
+              <div class="bg-light rounded-4 p-3 mb-3">
+                <div class="small text-secondary mb-1">Termék</div>
+
+                <div
+                  id="change-shop-quantity-product-name"
+                  class="fs-4 fw-bold text-dark"
+                >
+                  Coca-Cola 0,5L
+                </div>
+              </div>
+
+              <!-- Mennyiségek -->
+              <div class="row g-3">
+                <!-- Teljes mennyiség -->
+                <div class="col-6">
+                  <div class="border rounded-4 p-3 h-100">
+                    <div class="small text-secondary">Termék mennyisége</div>
+
+                    <div
+                      id="change-shop-quantity-product-quantity"
+                      class="fs-3 fw-bold mt-2"
+                    >
+                      120
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Jelenlegi bolti mennyiség -->
+                <div class="col-6">
+                  <div class="border rounded-4 p-3 h-100">
+                    <div class="small text-secondary">
+                      Jelenlegi bolti mennyiség
+                    </div>
+
+                    <div
+                      id="change-shop-quantity-current"
+                      class="fs-3 fw-bold mt-2"
+                    >
+                      45
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Új mennyiség -->
+              <div class="mt-4">
+                <label
+                  for="change-shop-quantity-new"
+                  class="form-label fw-semibold"
+                >
+                  Új bolti mennyiség
+                </label>
+
+                <div class="input-group input-group-lg">
+                  <input
+                    type="number"
+                    class="form-control text-center fw-bold fs-3"
+                    id="change-shop-quantity-new"
+                    min="0"
+                    step="1"
+                    inputmode="decimal"
+                  />
+
+                  <span class="input-group-text bg-white fw-semibold">
+                    db
+                  </span>
+                </div>
+
+                <div class="form-text">
+                  Add meg, hogy hány darab legyen jelenleg a boltban.
+                </div>
+              </div>
+            </div>
+
+            <!-- Footer -->
+            <div class="modal-footer border-0 px-4 pb-4 pt-2">
+              <button
+                type="button"
+                class="btn btn-light btn-lg px-4 rounded-3"
+                data-bs-dismiss="modal"
+              >
+                Mégse
+              </button>
+
+              <button
+                type="button"
+                class="btn btn-primary btn-lg px-4 rounded-3 fw-semibold"
+                id="save-update-stock-shop-quantity-btn"
+              >
+                Mentés
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <script type="module" src="StockPanel.js"></script>
+    <script src="../../../../node_modules/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+  </body>
+</html>

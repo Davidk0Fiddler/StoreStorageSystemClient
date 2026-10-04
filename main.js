@@ -3,6 +3,8 @@ const path = require("path");
 
 require("dotenv").config();
 
+const START_PAGE = "src/features/loading/ui/LoadingPage.html";
+
 function createWindow() {
   const window = new BrowserWindow({
     width: 1200,
@@ -14,7 +16,7 @@ function createWindow() {
     },
     icon: path.join(__dirname, "assets", "icon.png"),
   });
-  window.loadFile("pages/LoadingPage/LoadingPage.html");
+  window.loadFile(START_PAGE);
 
   // window.setMenu(null);
 

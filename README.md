@@ -29,21 +29,72 @@ All backend calls live in `scripts/api/` as small single-purpose modules.
 
 ## Project structure
 
+The codebase follows a **feature-sliced, DDD-inspired layout**: reusable
+libraries under `src/libs/`, and business features under `src/features/`.
+Features own their UI; libraries own cross-cutting concerns.
+
 ```
-├── main.js                 # Electron entry point, creates the BrowserWindow
-├── preload.js              # contextBridge: exposes config.API_URL to the renderer
-├── assets/                 # icons and images
-├── pages/                  # One folder per screen (HTML + JS + CSS)
-│   ├── LoadingPage/        # Splash screen
-│   ├── LoginPage/          # Authentication
-│   ├── LandingPage/        # Role-based menu
-│   ├── CounterPage/        # POS / cashier
-│   ├── AddStockPage/       # Create products
-│   ├── StockPanel/         # Stock management
-│   ├── StatisticsPanel/    # Income statistics
-│   └── ProfilPanel/        # User profile
-└── scripts/api/            # One module per backend endpoint
+├── main.js                       # Electron entry point, creates the BrowserWindow
+├── preload.js                    # contextBridge: exposes config.API_URL to the renderer
+├── assets/                       # icons and images
+└── src/
+    ├── libs/                     # Shared, feature-agnostic libraries
+    │   ├── domain/
+    │   │   └── roles.js          # Roles + the role rules for the dashboard menu
+    │   ├── data-access/          # Everything that talks to the backend
+    │   │   ├── http-client.js    # fetch wrapper: base URL, auth header, response conventions
+    │   │   ├── session.js        # token / userName / roleName in sessionStorage
+    │   │   ├── index.js          # public surface of the layer
+    │   │   └── repositories/     # One repository per bounded context
+    │   │       ├── auth.repository.js
+    │   │       ├── brand.repository.js
+    │   │       ├── counter.repository.js
+    │   │       ├── product.repository.js
+    │   │       ├── product-size.repository.js
+    │   │       ├── product-type.repository.js
+    │   │       ├── statistics.repository.js
+    │   │       ├── stock.repository.js
+    │   │       └── user.repository.js
+    │   └── ui/                   # Shared presentation pieces
+    │       ├── alert.js          # DisplayAlert / LoadingSpinner (was duplicated 5x)
+    │       ├── navigation.js     # Named routes -> relative HTML paths
+    │       └── index.js
+    ├── features/                 # One folder per business capability
+    │   ├── loading/ui/           # Splash screen
+    │   ├── auth/ui/              # Login
+    │   ├── dashboard/ui/         # Role-based menu
+    │   ├── counter/ui/           # POS / cashier
+    │   ├── catalog/ui/           # Create products (brands, types, sizes)
+    │   ├── inventory/ui/         # Stock management
+    │   ├── statistics/ui/        # Income statistics (+ its panel partials)
+    │   └── users/ui/             # User administration
+    └── shared/styles/            # Stylesheets used across several features
 ```
+
+### Layering rules
+
+- **Features** (`src/features/*`) contain only UI and orchestration. They import
+  from `libs/data-access` and `libs/ui`, and never call `fetch` directly.
+- **`libs/data-access`** owns all I/O. `http-client.js` centralises the base URL,
+  the bearer token and the response conventions; repositories group calls per
+  bounded context.
+- **`libs/domain`** holds pure business rules (role permissions) with no
+  dependency on the UI or the network.
+- **`libs/ui`** holds presentation helpers shared by features.
+
+### Response conventions
+
+The API wrappers historically returned different shapes per endpoint, and the
+pages branch on those values. The conventions are preserved deliberately and
+each has a named helper in `http-client.js`:
+
+| Helper                     | Resolves                                |
+| -------------------------- | --------------------------------------- |
+| `getJson`                  | parsed JSON (no status check)           |
+| `sendCommand`              | `true`, or the raw error text           |
+| `requestJsonOrText`        | JSON on success, error text on failure  |
+| `requestJsonOrFalse`       | JSON, or `false` when not found         |
+| `requestValidatedJson`     | JSON, or throws with backend errors     |
 
 ## Requirements
 

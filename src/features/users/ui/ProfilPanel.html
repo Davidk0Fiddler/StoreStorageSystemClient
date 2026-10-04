@@ -1,0 +1,1106 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Profil Panel</title>
+    <link
+      rel="stylesheet"
+      href="../../../../node_modules/bootstrap/dist/css/bootstrap.min.css"
+    />
+
+    <link
+      rel="stylesheet"
+      href="../../../../node_modules/bootstrap-icons/font/bootstrap-icons.css"
+    />
+    <link rel="stylesheet" href="../../../shared/styles/backgroundShapes.css" />
+    <link rel="stylesheet" href="../../../shared/styles/modernAlertStyle.css" />
+    <style>
+      .user-card {
+        border-radius: 16px;
+        background: #ffffff;
+        transition:
+          transform 0.2s ease,
+          box-shadow 0.2s ease;
+      }
+
+      .user-card:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08) !important;
+      }
+
+      .user-avatar {
+        width: 46px;
+        height: 46px;
+
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        border-radius: 12px;
+
+        background: #f1f5f9;
+        color: #475569;
+
+        font-size: 1.25rem;
+      }
+
+      .user-info {
+        display: flex;
+        flex-direction: column;
+        gap: 18px;
+      }
+
+      .info-row {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+      }
+
+      .info-row > div:last-child {
+        flex-grow: 1;
+        text-align: center;
+      }
+
+      .info-icon {
+        width: 36px;
+        height: 36px;
+
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        border-radius: 10px;
+
+        background: #f8fafc;
+        color: #64748b;
+
+        flex-shrink: 0;
+      }
+
+      .user-card .overflow-hidden {
+        flex-grow: 1;
+        text-align: center;
+      }
+
+      .user-card .btn {
+        border-radius: 10px;
+        font-weight: 500;
+
+        transition:
+          background-color 0.2s ease,
+          transform 0.15s ease;
+      }
+
+      .user-card .btn:hover {
+        transform: translateY(-1px);
+      }
+
+      .user-card .btn-light:hover {
+        background: #f1f5f9;
+      }
+
+      .profile-filter-bar {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 12px;
+
+        padding: 12px;
+      }
+
+      /* Egy szűrő */
+      .profile-filter {
+        position: relative;
+
+        display: flex;
+        align-items: center;
+        /* justify-content: center; */
+
+        gap: 12px;
+
+        min-height: 72px;
+        padding: 12px 16px;
+
+        background: #ffffff;
+        border: 1px solid #e2e8f0;
+        border-radius: 12px;
+
+        cursor: pointer;
+
+        transition:
+          background-color 0.2s ease,
+          border-color 0.2s ease,
+          box-shadow 0.2s ease,
+          transform 0.2s ease;
+      }
+
+      /* Hover */
+      .profile-filter:hover {
+        transform: translateY(-2px);
+
+        border-color: #cbd5e1;
+
+        box-shadow: 0 6px 16px rgba(0, 0, 0, 0.06);
+      }
+
+      /* Aktív szűrő */
+      .profile-filter.active {
+        background: #f8fafc;
+        border-color: #0d6efd;
+
+        box-shadow: 0 0 0 1px rgba(13, 110, 253, 0.1);
+      }
+
+      /* Aktív jelzés */
+      .profile-filter.active::after {
+        content: "";
+
+        position: absolute;
+
+        bottom: 0;
+        left: 14px;
+        right: 14px;
+
+        height: 3px;
+
+        background: #0d6efd;
+
+        border-radius: 3px 3px 0 0;
+      }
+
+      /* Ikon */
+      .filter-icon {
+        width: 40px;
+        height: 40px;
+
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        flex-shrink: 0;
+
+        background: #f1f5f9;
+        color: #64748b;
+
+        border-radius: 10px;
+
+        font-size: 1.1rem;
+
+        transition:
+          background-color 0.2s ease,
+          color 0.2s ease;
+      }
+
+      /* Aktív ikon */
+      .profile-filter.active .filter-icon {
+        background: rgba(13, 110, 253, 0.1);
+        color: #0d6efd;
+      }
+
+      /* Szöveg */
+      .filter-content {
+        display: flex;
+        flex-direction: column;
+
+        align-items: start;
+
+        line-height: 1.2;
+      }
+
+      /* Megnevezés */
+      .filter-label {
+        font-size: 0.85rem;
+        color: #64748b;
+        font-weight: 500;
+      }
+
+      /* Darabszám */
+      .filter-count {
+        margin-top: 4px;
+
+        font-size: 1.25rem;
+        font-weight: 700;
+
+        color: #1e293b;
+      }
+
+      /* Mobil */
+      @media (max-width: 767.98px) {
+        .profile-filter-bar {
+          grid-template-columns: repeat(2, 1fr);
+        }
+      }
+
+      /* Nagyon kis kijelző */
+      @media (max-width: 450px) {
+        .profile-filter-bar {
+          grid-template-columns: 1fr;
+        }
+      }
+
+      /* =========================================
+   USER CREATION MODAL
+   ========================================= */
+
+      .user-modal {
+        border: none;
+        border-radius: 18px;
+        overflow: hidden;
+
+        box-shadow: 0 20px 50px rgba(0, 0, 0, 0.12);
+      }
+
+      /* Header */
+
+      .user-modal-header {
+        padding: 22px 24px;
+
+        border-bottom: 1px solid #e2e8f0;
+
+        background: #ffffff;
+      }
+
+      .modal-title-icon {
+        width: 44px;
+        height: 44px;
+
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        border-radius: 12px;
+
+        background: rgba(13, 110, 253, 0.1);
+        color: #0d6efd;
+
+        font-size: 1.2rem;
+      }
+
+      .user-modal .modal-title {
+        font-size: 1.15rem;
+        font-weight: 650;
+
+        color: #1e293b;
+      }
+
+      .modal-subtitle {
+        margin-top: 2px;
+
+        font-size: 0.8rem;
+        color: #64748b;
+      }
+
+      /* Body */
+
+      .user-modal-body {
+        padding: 26px 24px;
+        background: #ffffff;
+      }
+
+      /* Form labels */
+
+      .modern-form-label {
+        display: flex;
+        align-items: center;
+        gap: 7px;
+
+        margin-bottom: 8px;
+
+        font-size: 0.85rem;
+        font-weight: 600;
+
+        color: #475569;
+      }
+
+      .modern-form-label i {
+        color: #64748b;
+        font-size: 0.9rem;
+      }
+
+      /* Inputs */
+
+      .modern-form-control {
+        min-height: 44px;
+
+        border: 1px solid #dbe2ea;
+        border-radius: 10px;
+
+        padding: 10px 13px;
+
+        color: #1e293b;
+        background: #ffffff;
+
+        box-shadow: none;
+
+        transition:
+          border-color 0.2s ease,
+          box-shadow 0.2s ease,
+          background-color 0.2s ease;
+      }
+
+      .modern-form-control::placeholder {
+        color: #94a3b8;
+      }
+
+      .modern-form-control:hover {
+        border-color: #cbd5e1;
+      }
+
+      .modern-form-control:focus {
+        border-color: #0d6efd;
+
+        box-shadow: 0 0 0 3px rgba(13, 110, 253, 0.1);
+
+        outline: none;
+      }
+
+      /* Password input */
+
+      .modern-input-group {
+        border-radius: 10px;
+      }
+
+      .modern-input-group .modern-form-control {
+        border-top-right-radius: 0;
+        border-bottom-right-radius: 0;
+      }
+
+      .modern-password-button {
+        width: 46px;
+
+        border: 1px solid #dbe2ea;
+        border-left: none;
+
+        border-radius: 0 10px 10px 0;
+
+        background: #f8fafc;
+        color: #64748b;
+
+        transition:
+          background-color 0.2s ease,
+          color 0.2s ease;
+      }
+
+      .modern-password-button:hover {
+        background: #f1f5f9;
+        color: #334155;
+      }
+
+      /* Select */
+
+      select.modern-form-control {
+        cursor: pointer;
+      }
+
+      /* Footer */
+
+      .user-modal-footer {
+        display: flex;
+        justify-content: flex-end;
+        gap: 10px;
+
+        padding: 18px 24px;
+
+        border-top: 1px solid #e2e8f0;
+
+        background: #f8fafc;
+      }
+
+      /* Modal buttons */
+
+      .modern-modal-button {
+        min-width: 105px;
+        min-height: 42px;
+
+        border-radius: 10px;
+
+        font-size: 0.9rem;
+        font-weight: 600;
+
+        transition:
+          transform 0.15s ease,
+          box-shadow 0.2s ease,
+          background-color 0.2s ease;
+      }
+
+      .modern-modal-button:hover {
+        transform: translateY(-1px);
+      }
+
+      /* Vissza */
+
+      .modern-cancel-button {
+        border: 1px solid #dbe2ea;
+
+        background: #ffffff;
+        color: #475569;
+      }
+
+      .modern-cancel-button:hover {
+        background: #f1f5f9;
+        color: #334155;
+      }
+
+      /* Mentés */
+
+      .modern-save-button {
+        border: none;
+
+        background: #0d6efd;
+        color: #ffffff;
+
+        box-shadow: 0 3px 8px rgba(13, 110, 253, 0.2);
+      }
+
+      .modern-save-button:hover {
+        background: #0b5ed7;
+        color: #ffffff;
+
+        box-shadow: 0 5px 12px rgba(13, 110, 253, 0.25);
+      }
+
+      /* Mobil */
+
+      @media (max-width: 575.98px) {
+        .user-modal-header {
+          padding: 18px;
+        }
+
+        .user-modal-body {
+          padding: 22px 18px;
+        }
+
+        .user-modal-footer {
+          padding: 16px 18px;
+        }
+
+        .modern-modal-button {
+          flex: 1;
+        }
+      }
+
+      /* =========================================
+   INFO
+   ========================================= */
+
+      .modern-alert.alert-info {
+        background: #eff6ff;
+        border-color: #bfdbfe;
+
+        color: #1e40af;
+      }
+
+      .modern-alert.alert-info .modern-alert-icon {
+        background: #dbeafe;
+        color: #2563eb;
+      }
+
+      /* Felhasználó módosítása modal */
+
+      .user-modal-title-wrapper {
+        display: flex;
+        align-items: center;
+        gap: 14px;
+      }
+
+      .user-modal-close {
+        width: 36px;
+        height: 36px;
+
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        padding: 0;
+
+        border: none;
+        border-radius: 10px;
+
+        background: transparent;
+        color: #6b7280;
+
+        font-size: 0.9rem;
+
+        cursor: pointer;
+
+        transition:
+          background-color 0.2s ease,
+          color 0.2s ease,
+          transform 0.2s ease;
+      }
+
+      .user-modal-close:hover {
+        background: #f3f4f6;
+        color: #111827;
+        transform: scale(1.05);
+      }
+
+      /* Select */
+
+      .modern-form-control {
+        min-height: 44px;
+      }
+
+      select.modern-form-control {
+        cursor: pointer;
+      }
+
+      /* Modal méretezés */
+
+      .user-modal {
+        border: none;
+        border-radius: 18px;
+        overflow: hidden;
+
+        box-shadow: 0 20px 50px rgba(0, 0, 0, 0.12);
+      }
+
+      /* Modal fejléc */
+
+      .user-modal-header {
+        padding: 20px 22px;
+        border-bottom: 1px solid #eef0f3;
+        background: #ffffff;
+
+        display: flex;
+        align-items: center;
+      }
+      /* Modal cím */
+
+      .user-modal-header .modal-title {
+        font-size: 1.05rem;
+        font-weight: 600;
+        color: #111827;
+        margin: 0;
+      }
+
+      .user-modal-close {
+        margin-left: auto;
+
+        width: 36px;
+        height: 36px;
+
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        padding: 0;
+
+        border: none;
+        border-radius: 10px;
+
+        background: transparent;
+        color: #6b7280;
+
+        font-size: 0.9rem;
+
+        cursor: pointer;
+
+        transition:
+          background-color 0.2s ease,
+          color 0.2s ease,
+          transform 0.2s ease;
+      }
+
+      .user-modal-close:hover {
+        background: #f3f4f6;
+        color: #111827;
+        transform: scale(1.05);
+      }
+
+      /* Alcím */
+
+      .user-modal-header .modal-subtitle {
+        margin-top: 3px;
+
+        font-size: 0.78rem;
+        color: #6b7280;
+      }
+
+      /* Ikon */
+
+      .modal-title-icon {
+        width: 42px;
+        height: 42px;
+
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        flex-shrink: 0;
+
+        border-radius: 11px;
+
+        background: #eff6ff;
+        color: #2563eb;
+
+        font-size: 1.15rem;
+      }
+
+      /* Modal body */
+
+      .user-modal-body {
+        padding: 24px 22px;
+      }
+
+      /* Label */
+
+      .modern-form-label {
+        display: flex;
+        align-items: center;
+        gap: 7px;
+
+        margin-bottom: 8px;
+
+        font-size: 0.82rem;
+        font-weight: 600;
+
+        color: #374151;
+      }
+
+      .modern-form-label i {
+        color: #6b7280;
+        font-size: 0.9rem;
+      }
+
+      /* Input */
+
+      .modern-form-control {
+        border: 1px solid #dfe3e8;
+        border-radius: 10px;
+
+        padding: 10px 12px;
+
+        font-size: 0.9rem;
+
+        background: #ffffff;
+
+        transition:
+          border-color 0.2s ease,
+          box-shadow 0.2s ease;
+      }
+
+      .modern-form-control:hover {
+        border-color: #c7ccd4;
+      }
+
+      .modern-form-control:focus {
+        border-color: #60a5fa;
+
+        box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+
+        outline: none;
+      }
+
+      /* Footer */
+
+      .user-modal-footer {
+        display: flex;
+        justify-content: flex-end;
+        gap: 10px;
+
+        padding: 16px 22px;
+
+        border-top: 1px solid #eef0f3;
+
+        background: #fafbfc;
+      }
+
+      /* Gombok */
+
+      .modern-modal-button {
+        min-height: 40px;
+
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+
+        gap: 7px;
+
+        padding: 8px 16px;
+
+        border-radius: 9px;
+
+        font-size: 0.85rem;
+        font-weight: 600;
+
+        transition:
+          background-color 0.2s ease,
+          border-color 0.2s ease,
+          transform 0.2s ease,
+          box-shadow 0.2s ease;
+      }
+
+      .modern-modal-button:hover {
+        transform: translateY(-1px);
+      }
+
+      /* Mégse */
+
+      .modern-cancel-button {
+        border: 1px solid #dfe3e8;
+
+        background: #ffffff;
+        color: #4b5563;
+      }
+
+      .modern-cancel-button:hover {
+        background: #f3f4f6;
+        border-color: #d1d5db;
+        color: #111827;
+      }
+
+      /* Mentés */
+
+      .modern-save-button {
+        border: 1px solid #2563eb;
+
+        background: #2563eb;
+        color: #ffffff;
+
+        box-shadow: 0 3px 8px rgba(37, 99, 235, 0.18);
+      }
+
+      .modern-save-button:hover {
+        background: #1d4ed8;
+        border-color: #1d4ed8;
+        color: #ffffff;
+
+        box-shadow: 0 5px 12px rgba(37, 99, 235, 0.22);
+      }
+    </style>
+  </head>
+  <body style="overflow-x: hidden">
+    <div class="background-shapes">
+      <div class="shape shape-1"></div>
+      <div class="shape shape-2"></div>
+      <div class="shape shape-3"></div>
+      <div class="shape shape-4"></div>
+    </div>
+    <!-- Alert elem -->
+    <section
+      id="alert-container"
+      class="position-fixed top-0 start-50 translate-middle-x mt-3"
+      style="z-index: 9999"
+    >
+      <div id="liveAlertPlaceholder"></div>
+    </section>
+
+    <!-- Profil létrehozás panel -->
+    <div
+      class="modal fade"
+      id="user-creation-modal"
+      aria-hidden="true"
+      aria-labelledby="user-creation-modal-label"
+      tabindex="-1"
+    >
+      <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content user-modal">
+          <!-- Fejléc -->
+          <div class="modal-header user-modal-header">
+            <div class="d-flex align-items-center gap-3">
+              <div class="modal-title-icon">
+                <i class="bi bi-person-plus"></i>
+              </div>
+
+              <div>
+                <h1 class="modal-title" id="user-creation-modal-label">
+                  Profil létrehozása
+                </h1>
+
+                <div class="modal-subtitle">
+                  Új felhasználói profil hozzáadása
+                </div>
+              </div>
+            </div>
+
+            <button
+              type="button"
+              class="btn-close"
+              data-bs-dismiss="modal"
+              aria-label="Close"
+            ></button>
+          </div>
+
+          <!-- Tartalom -->
+          <div class="modal-body user-modal-body">
+            <form>
+              <!-- Felhasználónév -->
+              <div class="modern-form-group mb-4">
+                <label
+                  for="user-creator-username-input"
+                  class="modern-form-label"
+                >
+                  <i class="bi bi-person"></i>
+                  Felhasználónév
+                </label>
+
+                <input
+                  type="text"
+                  class="form-control modern-form-control"
+                  id="user-creator-username-input"
+                  placeholder="Adja meg a felhasználónevet"
+                />
+              </div>
+
+              <!-- Jelszó -->
+              <div class="modern-form-group mb-4">
+                <label
+                  for="user-creator-password-input"
+                  class="modern-form-label"
+                >
+                  <i class="bi bi-lock"></i>
+                  Jelszó
+                </label>
+
+                <div class="input-group modern-input-group">
+                  <input
+                    type="password"
+                    id="user-creator-password-input"
+                    class="form-control modern-form-control"
+                    placeholder="Adja meg a jelszót"
+                  />
+
+                  <button
+                    class="btn modern-password-button"
+                    type="button"
+                    id="toggle-password-button"
+                  >
+                    <i class="bi bi-eye"></i>
+                  </button>
+                </div>
+              </div>
+
+              <!-- Jogosultság -->
+              <div class="modern-form-group">
+                <label for="role-selecter" class="modern-form-label">
+                  <i class="bi bi-shield-check"></i>
+                  Jogosultságkör
+                </label>
+
+                <select
+                  class="form-select modern-form-control"
+                  aria-label="Jogosultságkör kiválasztása"
+                  id="role-selecter"
+                >
+                  <option value="1">Adminisztrátor</option>
+                  <option value="2">Kasszás</option>
+                  <option value="3">Raktáros</option>
+                </select>
+              </div>
+            </form>
+          </div>
+
+          <!-- Lábléc -->
+          <div class="modal-footer user-modal-footer">
+            <button
+              type="button"
+              class="btn modern-modal-button modern-cancel-button"
+              data-bs-dismiss="modal"
+            >
+              <i class="bi bi-x-lg me-1"></i>
+              Vissza
+            </button>
+
+            <button
+              type="button"
+              class="btn modern-modal-button modern-save-button"
+              id="user-creator-save-button"
+            >
+              <i class="bi bi-check-lg me-1"></i>
+              Mentés
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Fejléc -->
+    <section
+      class="d-flex align-items-center justify-content-between border-bottom border-2"
+    >
+      <p class="h4 pt-2 ps-2 fw-bold d-flex align-items-center gap-3">
+        <i
+          class="bi bi-list fs-1"
+          data-bs-toggle="offcanvas"
+          data-bs-target="#sideMenu"
+          aria-controls="sideMenu"
+          style="cursor: pointer"
+        ></i>
+        <span id="panel-label"></span>
+      </p>
+      <p
+        class="btn btn-danger mt-3 me-3 py-2 px-3 fw-bold"
+        id="back-to-menu-button"
+      >
+        Vissza a menübe
+      </p>
+    </section>
+
+    <!-- Bal oldali menü -->
+    <div
+      class="offcanvas offcanvas-start"
+      tabindex="-1"
+      id="sideMenu"
+      aria-labelledby="sideMenuLabel"
+    >
+      <div class="offcanvas-header">
+        <h5 class="offcanvas-title" id="sideMenuLabel">Elosztó</h5>
+        <button
+          type="button"
+          class="btn-close"
+          data-bs-dismiss="offcanvas"
+          aria-label="Close"
+        ></button>
+      </div>
+      <div class="offcanvas-body">
+        <div class="row d-flex flex-column align-items-center">
+          <div
+            class="btn btn-outline-secondary col-10 p-2 mb-3 fw-bold"
+            data-bs-dismiss="offcanvas"
+            aria-label="Close"
+            id="profil-panel-sidebar-button"
+          >
+            <i class="bi bi-people"></i>
+            Profilok
+          </div>
+          <div
+            class="btn btn-outline-secondary col-10 p-2 mb-3 fw-bold"
+            data-bs-target="#user-creation-modal"
+            data-bs-dismiss="offcanvas"
+            data-bs-toggle="modal"
+          >
+            <i class="bi bi-person-plus"></i>
+            Profil létrehozása
+          </div>
+          <div
+            class="btn btn-danger col-10 p-2 mb-3 fw-bold"
+            id="back-to-menu-side-bar-button"
+          >
+            Vissza a menübe
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Összesített adatok -->
+    <section id="main-container" style="overflow-x: hidden"></section>
+
+    <!--Betöltési pörgő-->
+    <section id="spinning-overlay" class="d-none">
+      <div class="position-absolute top-50 start-50 translate-middle">
+        <div
+          class="spinner-border text-primary"
+          style="width: 3rem; height: 3rem"
+          role="status"
+        >
+          <span class="visually-hidden">Loading...</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- Update Modal -->
+    <section>
+      <div
+        class="modal fade"
+        id="user-update-modal"
+        tabindex="-1"
+        aria-labelledby="user-update-modal-label"
+        aria-hidden="true"
+      >
+        <div class="modal-dialog modal-dialog-centered">
+          <div class="modal-content user-modal">
+            <!-- Fejléc -->
+            <div class="modal-header user-modal-header">
+              <div class="user-modal-title-wrapper">
+                <div class="modal-title-icon">
+                  <i class="bi bi-person-gear"></i>
+                </div>
+
+                <div>
+                  <h5 class="modal-title" id="user-update-modal-label">
+                    Felhasználó módosítása
+                  </h5>
+
+                  <div class="modal-subtitle">
+                    A felhasználói adatok és jogosultság módosítása
+                  </div>
+                </div>
+              </div>
+
+              <button
+                type="button"
+                class="user-modal-close"
+                data-bs-dismiss="modal"
+                aria-label="Bezárás"
+              >
+                <i class="bi bi-x-lg"></i>
+              </button>
+            </div>
+
+            <!-- Tartalom -->
+            <div class="modal-body user-modal-body">
+              <input type="hidden" id="update-original-username" />
+
+              <!-- Felhasználónév -->
+              <div class="mb-4">
+                <label for="update-username-input" class="modern-form-label">
+                  <i class="bi bi-person"></i>
+                  Felhasználónév
+                </label>
+
+                <input
+                  type="text"
+                  class="form-control modern-form-control"
+                  id="update-username-input"
+                  placeholder="Felhasználónév"
+                />
+              </div>
+
+              <!-- Jogosultság -->
+              <div class="mb-2">
+                <label for="update-role-select" class="modern-form-label">
+                  <i class="bi bi-shield-check"></i>
+                  Jogosultságkör
+                </label>
+
+                <select
+                  class="form-select modern-form-control"
+                  id="update-role-select"
+                >
+                  <option value="1">Adminisztrátor</option>
+                  <option value="2">Kasszás</option>
+                  <option value="3">Raktáros</option>
+                </select>
+              </div>
+            </div>
+
+            <!-- Lábléc -->
+            <div class="modal-footer user-modal-footer">
+              <button
+                type="button"
+                class="btn modern-modal-button modern-cancel-button"
+                data-bs-dismiss="modal"
+              >
+                <i class="bi bi-x-lg"></i>
+                Mégse
+              </button>
+
+              <button
+                type="button"
+                class="btn modern-modal-button modern-save-button"
+                id="user-update-save-button"
+              >
+                <i class="bi bi-check-lg"></i>
+                Mentés
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <script src="../../../../node_modules/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script type="module" src="ProfilPanel.js"></script>
+  </body>
+</html>
