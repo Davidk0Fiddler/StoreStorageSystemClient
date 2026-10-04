@@ -1,0 +1,412 @@
+/* =========================================
+   PRODUCT SIZE FILTER BAR
+========================================= */
+
+.productsize-filter-bar {
+  display: grid;
+
+  grid-template-columns: repeat(4, 1fr);
+
+  gap: 12px;
+
+  width: 100%;
+}
+
+/* =========================================
+   PRODUCT SIZE FILTER
+========================================= */
+
+.productsize-filter {
+  position: relative;
+
+  display: flex;
+  align-items: center;
+
+  gap: 12px;
+
+  min-height: 68px;
+
+  padding: 12px 16px;
+
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+
+  background: #ffffff;
+
+  cursor: pointer;
+
+  transition:
+    border-color 0.2s ease,
+    box-shadow 0.2s ease,
+    transform 0.2s ease,
+    background-color 0.2s ease;
+}
+
+.productsize-filter:hover {
+  border-color: #cbd5e1;
+
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+
+  transform: translateY(-1px);
+}
+
+/* =========================================
+   ACTIVE FILTER
+========================================= */
+
+.productsize-filter.active {
+  border-color: #2563eb;
+
+  background: #ffffff;
+
+  box-shadow: 0 3px 10px rgba(37, 99, 235, 0.08);
+}
+
+.productsize-filter.active::after {
+  content: "";
+
+  position: absolute;
+
+  left: 14px;
+  right: 14px;
+  bottom: 0;
+
+  height: 3px;
+
+  border-radius: 3px 3px 0 0;
+
+  background: #2563eb;
+}
+
+/* =========================================
+   FILTER ICON
+========================================= */
+
+.productsize-filter-icon {
+  width: 42px;
+  height: 42px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  flex-shrink: 0;
+
+  border-radius: 10px;
+
+  background: #f3f4f6;
+
+  color: #6b7280;
+
+  font-size: 1.15rem;
+
+  transition:
+    background-color 0.2s ease,
+    color 0.2s ease;
+}
+
+.productsize-filter.active .productsize-filter-icon {
+  background: #eff6ff;
+
+  color: #2563eb;
+}
+
+/* =========================================
+   FILTER CONTENT
+========================================= */
+
+.productsize-filter-content {
+  display: flex;
+
+  flex-direction: column;
+
+  gap: 3px;
+
+  min-width: 0;
+}
+
+/* =========================================
+   FILTER LABEL
+========================================= */
+
+.productsize-filter-label {
+  font-size: 0.88rem;
+
+  font-weight: 500;
+
+  line-height: 1.2;
+
+  color: #6b7280;
+
+  white-space: nowrap;
+}
+
+.productsize-filter.active .productsize-filter-label {
+  color: #2563eb;
+}
+
+/* =========================================
+   FILTER COUNT
+========================================= */
+
+.productsize-filter-count {
+  font-size: 1.15rem;
+
+  font-weight: 700;
+
+  line-height: 1.2;
+
+  color: #111827;
+}
+
+/* =========================================
+   CREATE BUTTON
+========================================= */
+
+.productsize-create-wrapper {
+  display: flex;
+
+  align-items: center;
+  justify-content: center;
+}
+
+.productsize-create-button {
+  width: 100%;
+
+  min-height: 68px;
+
+  display: flex;
+
+  align-items: center;
+  justify-content: center;
+
+  gap: 8px;
+
+  padding: 12px 16px;
+
+  border: 1px solid #2563eb;
+
+  border-radius: 12px;
+
+  background: #2563eb;
+
+  color: #ffffff;
+
+  font-size: 0.88rem;
+
+  font-weight: 600;
+
+  box-shadow: 0 3px 8px rgba(37, 99, 235, 0.16);
+
+  cursor: pointer;
+
+  transition:
+    background-color 0.2s ease,
+    border-color 0.2s ease,
+    box-shadow 0.2s ease,
+    transform 0.2s ease;
+}
+
+.productsize-create-button i {
+  font-size: 1.1rem;
+}
+
+.productsize-create-button:hover {
+  background: #1d4ed8;
+
+  border-color: #1d4ed8;
+
+  color: #ffffff;
+
+  transform: translateY(-1px);
+
+  box-shadow: 0 5px 12px rgba(37, 99, 235, 0.22);
+}
+
+.productsize-create-button:active {
+  transform: translateY(0);
+}
+
+/* =========================================
+   RESPONSIVE
+========================================= */
+
+@media (max-width: 900px) {
+  .productsize-filter-bar {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 450px) {
+  .productsize-filter-bar {
+    grid-template-columns: 1fr;
+  }
+
+  .productsize-create-button {
+    min-height: 60px;
+  }
+}
+
+/* =========================================
+   PRODUCT SIZE CARD
+========================================= */
+
+.product-size-card {
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+.product-size-card:hover {
+  transform: translateY(-3px);
+
+  box-shadow: 0 0.75rem 1.5rem rgba(0, 0, 0, 0.08) !important;
+}
+
+/* =========================================
+   PRODUCT SIZE CARD BUTTONS
+========================================= */
+
+.product-size-card .btn {
+  transition:
+    transform 0.15s ease,
+    box-shadow 0.15s ease;
+}
+
+.product-size-card .btn:hover {
+  transform: translateY(-1px);
+}
+
+/* =========================================
+   PRODUCT SIZE UPDATE MODAL
+========================================= */
+
+#ProductSize-update-modal .modal-content {
+  overflow: hidden;
+
+  border-radius: 1rem !important;
+}
+
+/* =========================================
+   INPUT
+========================================= */
+
+#ProductSize-update-modal .input-group-text {
+  border-color: #dee2e6;
+
+  background-color: #f8f9fa;
+}
+
+#ProductSize-update-modal .form-control {
+  border-color: #dee2e6;
+
+  transition:
+    border-color 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+#ProductSize-update-modal .form-control:focus {
+  border-color: #86b7fe;
+
+  box-shadow: none;
+}
+
+#ProductSize-update-modal .input-group:focus-within {
+  box-shadow: 0 0 0 0.2rem rgba(13, 110, 253, 0.1);
+
+  border-radius: 0.5rem;
+}
+
+#ProductSize-update-modal .input-group:focus-within .input-group-text {
+  border-color: #86b7fe;
+}
+
+/* =========================================
+   BUTTONS
+========================================= */
+
+#ProductSize-update-modal .btn {
+  transition:
+    transform 0.15s ease,
+    box-shadow 0.15s ease,
+    background-color 0.15s ease;
+}
+
+#ProductSize-update-modal .btn:hover {
+  transform: translateY(-1px);
+}
+
+#ProductSize-update-modal .btn-primary:hover {
+  box-shadow: 0 4px 10px rgba(13, 110, 253, 0.2);
+}
+
+#ProductSize-update-modal .btn-light:hover {
+  background-color: #f1f3f5;
+}
+
+/* =========================================
+   PRODUCT SIZE CREATE MODAL
+========================================= */
+
+#ProductSize-create-modal .modal-content {
+  overflow: hidden;
+
+  border-radius: 1rem !important;
+}
+
+/* =========================================
+   INPUT
+========================================= */
+
+#ProductSize-create-modal .input-group-text {
+  border-color: #dee2e6;
+
+  background-color: #f8f9fa;
+}
+
+#ProductSize-create-modal .form-control {
+  border-color: #dee2e6;
+
+  transition:
+    border-color 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+#ProductSize-create-modal .form-control:focus {
+  border-color: #86b7fe;
+
+  box-shadow: none;
+}
+
+#ProductSize-create-modal .input-group:focus-within {
+  box-shadow: 0 0 0 0.2rem rgba(13, 110, 253, 0.1);
+
+  border-radius: 0.5rem;
+}
+
+#ProductSize-create-modal .input-group:focus-within .input-group-text {
+  border-color: #86b7fe;
+}
+
+/* =========================================
+   BUTTONS
+========================================= */
+
+#ProductSize-create-modal .btn {
+  transition:
+    transform 0.15s ease,
+    box-shadow 0.15s ease,
+    background-color 0.15s ease;
+}
+
+#ProductSize-create-modal .btn:hover {
+  transform: translateY(-1px);
+}
+
+#ProductSize-create-modal .btn-primary:hover {
+  box-shadow: 0 4px 10px rgba(13, 110, 253, 0.2);
+}
+
+#ProductSize-create-modal .btn-light:hover {
+  background-color: #f1f3f5;
+}

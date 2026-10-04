@@ -1,0 +1,135 @@
+<div class="statistics-income-grid">
+  <!-- ÖSSZESÍTETT BEVÉTEL -->
+  <section class="card border-0 shadow-sm rounded-4 statistics-card">
+    <div class="card-body p-4 d-flex flex-column">
+      <div class="d-flex align-items-center justify-content-between mb-4">
+        <div>
+          <div class="text-body-secondary small fw-semibold text-uppercase">
+            Pénzügyi áttekintés
+          </div>
+
+          <h4 class="fw-bold mb-0 mt-1">Összesített bevétel</h4>
+        </div>
+
+        <div
+          class="d-flex align-items-center justify-content-center bg-primary-subtle text-primary rounded-3"
+          style="width: 48px; height: 48px"
+        >
+          <i class="bi bi-cash-stack fs-4"></i>
+        </div>
+      </div>
+
+      <div class="mt-auto">
+        <div class="display-5 fw-bold" id="total-income-area"></div>
+
+        <div class="text-body-secondary mt-2">
+          Az összes rögzített értékesítés alapján
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- MAI BEVÉTEL -->
+  <section class="card border-0 shadow-sm rounded-4 statistics-card">
+    <div class="card-body p-4">
+      <div class="d-flex align-items-center justify-content-between mb-4">
+        <div>
+          <div class="text-body-secondary small fw-semibold text-uppercase">
+            Aktuális időszak
+          </div>
+
+          <h4 class="fw-bold mb-0 mt-1">Mai bevétel</h4>
+        </div>
+
+        <div
+          class="d-flex align-items-center justify-content-center bg-success-subtle text-success rounded-3"
+          style="width: 48px; height: 48px"
+        >
+          <i class="bi bi-calendar-day fs-4"></i>
+        </div>
+      </div>
+
+      <div class="display-6 fw-bold" id="today-income-area">0 Ft</div>
+
+      <div class="text-body-secondary mt-2" id="today-shoplog-count-area">
+        0 értékesítés
+      </div>
+    </div>
+  </section>
+
+  <!-- BEVÉTELI GRAFIKON -->
+  <section
+    class="card border-0 shadow-sm rounded-4 statistics-card statistics-income-chart"
+  >
+    <div class="card-body p-4 d-flex flex-column">
+      <!-- FEJLÉC -->
+      <div class="d-flex align-items-center justify-content-between mb-4">
+        <div>
+          <div class="text-body-secondary small fw-semibold text-uppercase">
+            Bevétel alakulása
+          </div>
+
+          <h4 class="fw-bold mb-0 mt-1">Bevételi grafikon</h4>
+        </div>
+
+        <div
+          class="d-flex align-items-center justify-content-center bg-info-subtle text-info rounded-3"
+          style="width: 48px; height: 48px"
+        >
+          <i class="bi bi-graph-up-arrow fs-4"></i>
+        </div>
+      </div>
+
+      <!-- IDŐSZAK VÁLASZTÓ -->
+      <div
+        class="btn-group w-100 mb-4"
+        role="group"
+        aria-label="Bevételi időszak"
+      >
+        <button
+          type="button"
+          class="btn btn-primary income-period-button active"
+          data-period="daily"
+          id="daily-chart-btn"
+        >
+          Napi
+        </button>
+
+        <button
+          type="button"
+          class="btn btn-outline-primary income-period-button"
+          data-period="weekly"
+          id="weekly-chart-btn"
+        >
+          Heti
+        </button>
+
+        <button
+          type="button"
+          class="btn btn-outline-primary income-period-button"
+          data-period="monthly"
+          id="monthly-chart-btn"
+        >
+          Havi
+        </button>
+
+        <button
+          type="button"
+          class="btn btn-outline-primary income-period-button"
+          data-period="yearly"
+          id="yearly-chart-btn"
+        >
+          Évi
+        </button>
+      </div>
+
+      <!-- GRAFIKON -->
+      <div
+        class="position-relative flex-grow-1 w-100 rounded-4 bg-body-tertiary p-3"
+        style="min-height: 350px"
+      >
+        <canvas id="income-chart"></canvas>
+      </div>
+    </div>
+  </section>
+</div>

@@ -1,0 +1,180 @@
+.modern-alert {
+  position: relative;
+
+  display: flex;
+  align-items: center;
+
+  gap: 14px;
+
+  margin: 15px 0;
+  padding: 14px 48px 16px 16px;
+
+  border: 1px solid transparent;
+  border-radius: 12px;
+
+  font-size: 0.9rem;
+  font-weight: 500;
+
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+
+  overflow: hidden;
+}
+
+/* =========================================
+   IKON
+   ========================================= */
+
+.modern-alert-icon {
+  width: 34px;
+  height: 34px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  flex-shrink: 0;
+
+  border-radius: 9px;
+
+  font-size: 1rem;
+}
+
+/* =========================================
+   ÜZENET
+   ========================================= */
+
+.modern-alert-message {
+  flex: 1;
+
+  line-height: 1.45;
+}
+
+/* =========================================
+   BEZÁRÓ X
+   ========================================= */
+
+.modern-alert-close {
+  position: absolute;
+
+  top: 50%;
+  right: 12px;
+
+  transform: translateY(-50%);
+
+  width: 32px;
+  height: 32px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  padding: 0;
+
+  border: none;
+  border-radius: 8px;
+
+  background: transparent;
+
+  color: currentColor;
+
+  opacity: 0.5;
+
+  cursor: pointer;
+
+  transition:
+    background-color 0.2s ease,
+    opacity 0.2s ease,
+    transform 0.2s ease;
+}
+
+.modern-alert-close:hover {
+  opacity: 1;
+
+  background: rgba(0, 0, 0, 0.06);
+
+  transform: translateY(-50%) scale(1.05);
+}
+
+.modern-alert-close i {
+  font-size: 0.8rem;
+}
+
+/* =========================================
+   IDŐZÍTŐ CSÍK
+   ========================================= */
+
+.modern-alert-progress {
+  position: absolute;
+
+  left: 0;
+  bottom: 0;
+
+  width: 100%;
+  height: 3px;
+
+  background: currentColor;
+
+  opacity: 0.35;
+
+  transform-origin: left;
+
+  animation: alertProgress 3s linear forwards;
+}
+
+@keyframes alertProgress {
+  from {
+    transform: scaleX(1);
+  }
+
+  to {
+    transform: scaleX(0);
+  }
+}
+
+/* =========================================
+   SUCCESS
+   ========================================= */
+
+.modern-alert.alert-success {
+  background: #f0fdf4;
+  border-color: #bbf7d0;
+
+  color: #166534;
+}
+
+.modern-alert.alert-success .modern-alert-icon {
+  background: #dcfce7;
+  color: #16a34a;
+}
+
+/* =========================================
+   DANGER
+   ========================================= */
+
+.modern-alert.alert-danger {
+  background: #fef2f2;
+  border-color: #fecaca;
+
+  color: #991b1b;
+}
+
+.modern-alert.alert-danger .modern-alert-icon {
+  background: #fee2e2;
+  color: #dc2626;
+}
+
+/* =========================================
+   WARNING
+   ========================================= */
+
+.modern-alert.alert-warning {
+  background: #fffbeb;
+  border-color: #fde68a;
+
+  color: #92400e;
+}
+
+.modern-alert.alert-warning .modern-alert-icon {
+  background: #fef3c7;
+  color: #d97706;
+}

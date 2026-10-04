@@ -1,0 +1,136 @@
+#products-table tbody tr {
+  transition:
+    background-color 0.15s ease,
+    box-shadow 0.15s ease;
+}
+
+#products-table tbody tr:hover {
+  background-color: var(--bs-tertiary-bg);
+}
+
+#products-table tbody td {
+  padding-top: 14px;
+  padding-bottom: 14px;
+}
+
+#products-table thead th {
+  font-size: 0.8rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--bs-secondary-color);
+  border-bottom: 1px solid var(--bs-border-color);
+}
+
+.product-filter-bar {
+  display: flex;
+  align-items: stretch;
+  gap: 12px;
+  width: 100%;
+}
+
+.product-filter {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 16px;
+  min-height: 64px;
+
+  background: var(--bs-body-bg);
+  border: 1px solid var(--bs-border-color);
+  border-radius: 14px;
+
+  cursor: pointer;
+  transition:
+    background-color 0.15s ease,
+    border-color 0.15s ease,
+    box-shadow 0.15s ease,
+    transform 0.15s ease;
+}
+
+.product-filter:hover {
+  background: var(--bs-tertiary-bg);
+  border-color: var(--bs-primary);
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.06);
+}
+
+.product-filter-icon {
+  width: 42px;
+  height: 42px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border-radius: 11px;
+  background: var(--bs-primary-bg-subtle);
+  color: var(--bs-primary);
+
+  font-size: 1.25rem;
+  flex-shrink: 0;
+}
+
+.product-filter-content {
+  display: flex;
+  align-items: center;
+}
+
+.product-filter-label {
+  font-size: 0.95rem;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+/* Szűrés eltávolítása */
+#dismiss-search-filter-button {
+  color: var(--bs-danger);
+}
+
+#dismiss-search-filter-button .product-filter-icon {
+  background: var(--bs-danger-bg-subtle);
+  color: var(--bs-danger);
+}
+
+/* Létrehozás */
+.product-create-wrapper {
+  margin-left: auto;
+
+  display: flex;
+  align-items: stretch;
+}
+
+.product-create-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 9px;
+
+  min-height: 64px;
+  padding: 10px 20px;
+
+  border: 0;
+  border-radius: 14px;
+
+  background: var(--bs-primary);
+  color: #fff;
+
+  font-size: 0.95rem;
+  font-weight: 600;
+
+  cursor: pointer;
+
+  transition:
+    background-color 0.15s ease,
+    box-shadow 0.15s ease,
+    transform 0.15s ease;
+}
+
+.product-create-button:hover {
+  background: var(--bs-primary);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
+  transform: translateY(-1px);
+}
+
+.product-create-button i {
+  font-size: 1.15rem;
+}

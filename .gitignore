@@ -1,0 +1,30 @@
+# Dependencies
+node_modules/
+
+# Environment variables (machine-specific API config)
+.env
+.env.local
+.env.*.local
+
+# Build output
+dist/
+out/
+build/
+release/
+
+# Logs
+logs/
+*.log
+npm-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# OS files
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Editor / IDE
+.vscode/
+.idea/
+*.swp

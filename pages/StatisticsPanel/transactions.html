@@ -1,0 +1,227 @@
+<div class="container-fluid h-100 overflow-hidden" style="max-height: 100vh">
+  <div class="row g-3 h-100">
+    <!-- BAL OLDAL -->
+    <div class="col-12 col-xl-8 h-100">
+      <div class="card border-0 shadow-sm rounded-4 h-100">
+        <div class="card-body p-4 d-flex flex-column overflow-hidden">
+          <!-- FEJLÉC -->
+          <div
+            class="d-flex align-items-center justify-content-between mb-4 flex-shrink-0"
+          >
+            <div class="d-flex align-items-center gap-3">
+              <div class="bg-primary-subtle text-primary rounded-3 p-3">
+                <i class="bi bi-receipt-cutoff fs-3"></i>
+              </div>
+
+              <div>
+                <h5 class="fw-bold mb-1">Tranzakciók</h5>
+
+                <small class="text-body-secondary">
+                  Értékesítési aktivitás
+                </small>
+              </div>
+            </div>
+
+            <span class="badge rounded-pill text-bg-primary"> Ma </span>
+          </div>
+
+          <!-- STATISZTIKÁK -->
+          <div class="row g-3 mb-4 flex-shrink-0">
+            <div class="col-6 col-lg-3">
+              <div class="bg-body-tertiary rounded-4 p-3">
+                <div class="small text-body-secondary">Tranzakciók</div>
+
+                <div id="transactions-count" class="fs-3 fw-bold mt-1">128</div>
+              </div>
+            </div>
+
+            <div class="col-6 col-lg-3">
+              <div class="bg-primary-subtle text-primary rounded-4 p-3">
+                <div class="small opacity-75">Bevétel</div>
+
+                <div id="transactions-income" class="fs-3 fw-bold mt-1">
+                  684 500 Ft
+                </div>
+              </div>
+            </div>
+
+            <div class="col-6 col-lg-3">
+              <div class="bg-success-subtle text-success rounded-4 p-3">
+                <div class="small opacity-75">Átlagos kosár</div>
+
+                <div id="transactions-average" class="fs-3 fw-bold mt-1">
+                  5 348 Ft
+                </div>
+              </div>
+            </div>
+
+            <div class="col-6 col-lg-3">
+              <div class="bg-warning-subtle text-warning rounded-4 p-3">
+                <div class="small opacity-75">Termékek</div>
+
+                <div id="transactions-products" class="fs-3 fw-bold mt-1">
+                  342 db
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- GRAFIKON -->
+          <div
+            class="bg-body-tertiary rounded-4 p-3 flex-grow-1"
+            style="min-height: 0"
+          >
+            <div class="d-flex align-items-center justify-content-between mb-3">
+              <div>
+                <div class="fw-bold">Tranzakciók alakulása</div>
+
+                <small class="text-body-secondary">
+                  Az elmúlt 7 nap értékesítési aktivitása
+                </small>
+              </div>
+
+              <i class="bi bi-bar-chart-line text-primary fs-4"></i>
+            </div>
+
+            <div class="position-relative" style="height: calc(100% - 55px)">
+              <canvas id="transactions-chart"></canvas>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- JOBB OLDAL -->
+    <div class="col-12 col-xl-4 h-100">
+      <div class="card border-0 shadow-sm rounded-4 h-100">
+        <div class="card-body p-4 d-flex flex-column overflow-hidden">
+          <div class="mb-4 flex-shrink-0">
+            <div class="fw-bold fs-5">Legutóbbi tranzakciók</div>
+
+            <small class="text-body-secondary">
+              A legutóbbi értékesítések
+            </small>
+          </div>
+
+          <!-- LISTA -->
+          <div
+            id="transactions-list"
+            class="d-flex flex-column gap-2 overflow-auto flex-grow-1"
+            style="min-height: 0"
+          >
+            <!-- MOCK TRANZAKCIÓ -->
+            <div class="border rounded-4 p-3">
+              <div class="d-flex align-items-center justify-content-between">
+                <div class="d-flex align-items-center gap-3">
+                  <div class="bg-success-subtle text-success rounded-3 p-2">
+                    <i class="bi bi-cart-check"></i>
+                  </div>
+
+                  <div>
+                    <div class="fw-semibold">#TRX-0128</div>
+
+                    <small class="text-body-secondary"> 20:14 </small>
+                  </div>
+                </div>
+
+                <div class="text-end">
+                  <div class="fw-bold">8 450 Ft</div>
+
+                  <small class="text-body-secondary"> 4 tétel </small>
+                </div>
+              </div>
+            </div>
+
+            <div class="border rounded-4 p-3">
+              <div class="d-flex align-items-center justify-content-between">
+                <div class="d-flex align-items-center gap-3">
+                  <div class="bg-primary-subtle text-primary rounded-3 p-2">
+                    <i class="bi bi-cart-check"></i>
+                  </div>
+
+                  <div>
+                    <div class="fw-semibold">#TRX-0127</div>
+
+                    <small class="text-body-secondary"> 19:52 </small>
+                  </div>
+                </div>
+
+                <div class="text-end">
+                  <div class="fw-bold">3 250 Ft</div>
+
+                  <small class="text-body-secondary"> 2 tétel </small>
+                </div>
+              </div>
+            </div>
+
+            <div class="border rounded-4 p-3">
+              <div class="d-flex align-items-center justify-content-between">
+                <div class="d-flex align-items-center gap-3">
+                  <div class="bg-warning-subtle text-warning rounded-3 p-2">
+                    <i class="bi bi-cart-check"></i>
+                  </div>
+
+                  <div>
+                    <div class="fw-semibold">#TRX-0126</div>
+
+                    <small class="text-body-secondary"> 19:35 </small>
+                  </div>
+                </div>
+
+                <div class="text-end">
+                  <div class="fw-bold">12 890 Ft</div>
+
+                  <small class="text-body-secondary"> 7 tétel </small>
+                </div>
+              </div>
+            </div>
+
+            <div class="border rounded-4 p-3">
+              <div class="d-flex align-items-center justify-content-between">
+                <div class="d-flex align-items-center gap-3">
+                  <div class="bg-primary-subtle text-primary rounded-3 p-2">
+                    <i class="bi bi-cart-check"></i>
+                  </div>
+
+                  <div>
+                    <div class="fw-semibold">#TRX-0125</div>
+
+                    <small class="text-body-secondary"> 19:12 </small>
+                  </div>
+                </div>
+
+                <div class="text-end">
+                  <div class="fw-bold">5 600 Ft</div>
+
+                  <small class="text-body-secondary"> 3 tétel </small>
+                </div>
+              </div>
+            </div>
+
+            <div class="border rounded-4 p-3">
+              <div class="d-flex align-items-center justify-content-between">
+                <div class="d-flex align-items-center gap-3">
+                  <div class="bg-success-subtle text-success rounded-3 p-2">
+                    <i class="bi bi-cart-check"></i>
+                  </div>
+
+                  <div>
+                    <div class="fw-semibold">#TRX-0124</div>
+
+                    <small class="text-body-secondary"> 18:47 </small>
+                  </div>
+                </div>
+
+                <div class="text-end">
+                  <div class="fw-bold">7 240 Ft</div>
+
+                  <small class="text-body-secondary"> 5 tétel </small>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

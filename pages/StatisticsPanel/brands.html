@@ -1,0 +1,186 @@
+<div class="container-fluid h-100 overflow-hidden" style="max-height: 100vh">
+  <div class="row g-3 h-100">
+    <!-- BAL OLDAL - ÖSSZESÍTÉS -->
+    <div class="col-12 col-xl-4 h-100">
+      <div class="card border-0 shadow-sm rounded-4 h-100">
+        <div class="card-body p-4 d-flex flex-column overflow-auto">
+          <div class="d-flex align-items-center gap-3 mb-4">
+            <div class="bg-primary-subtle text-primary rounded-3 p-3">
+              <i class="bi bi-tags-fill fs-3"></i>
+            </div>
+
+            <div>
+              <h5 class="fw-bold mb-1">Márkák</h5>
+
+              <small class="text-body-secondary">
+                Értékesítési összesítés
+              </small>
+            </div>
+          </div>
+
+          <!-- ÖSSZES MÁRKA -->
+          <div class="bg-body-tertiary rounded-4 p-4 mb-3">
+            <div class="small text-body-secondary mb-1">Összes márka</div>
+
+            <div id="brands-total-count" class="display-6 fw-bold">0</div>
+          </div>
+
+          <!-- ÖSSZES ELADÁS -->
+          <div class="bg-primary-subtle text-primary rounded-4 p-4 mb-3">
+            <div class="small opacity-75 mb-1">Összes eladott termék</div>
+
+            <div id="brands-total-sales" class="display-6 fw-bold">0 db</div>
+          </div>
+
+          <!-- LEGTÖBB ELADÁS -->
+          <div class="bg-success-subtle text-success rounded-4 p-4">
+            <div class="small opacity-75 mb-1">Legtöbbet értékesítő márka</div>
+
+            <div id="brands-top-brand" class="fs-3 fw-bold">-</div>
+
+            <div id="brands-top-brand-sales" class="small mt-1">0 db</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- KÖZÉP - MÁRKÁK LISTÁJA -->
+    <div class="col-12 col-xl-4 h-100">
+      <div class="card border-0 shadow-sm rounded-4 h-100">
+        <div class="card-body p-4 d-flex flex-column overflow-hidden">
+          <!-- FEJLÉC -->
+          <div
+            class="d-flex align-items-center justify-content-between mb-4 flex-shrink-0"
+          >
+            <div class="d-flex align-items-center gap-3">
+              <div class="bg-success-subtle text-success rounded-3 p-3">
+                <i class="bi bi-bar-chart-fill fs-3"></i>
+              </div>
+
+              <div>
+                <h5 class="fw-bold mb-1">Márkák rangsora</h5>
+
+                <small class="text-body-secondary">
+                  Eladott mennyiség alapján
+                </small>
+              </div>
+            </div>
+          </div>
+
+          <!-- KERESÉS -->
+          <div class="input-group mb-3 flex-shrink-0">
+            <span class="input-group-text bg-body-tertiary border-0">
+              <i class="bi bi-search"></i>
+            </span>
+
+            <input
+              id="brands-search"
+              type="text"
+              class="form-control bg-body-tertiary border-0"
+              placeholder="Márka keresése..."
+            />
+          </div>
+
+          <!-- LISTA -->
+          <div
+            id="brands-list"
+            class="d-flex flex-column gap-2 overflow-auto flex-grow-1"
+            style="min-height: 0"
+          >
+            <!-- JS tölti -->
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- JOBB OLDAL - KIVÁLASZTOTT MÁRKA -->
+    <div class="col-12 col-xl-4 h-100">
+      <div class="card border-0 shadow-sm rounded-4 h-100">
+        <div class="card-body p-4 overflow-auto">
+          <!-- ÜRES ÁLLAPOT -->
+          <div
+            id="brand-selected-empty"
+            class="h-100 d-flex flex-column align-items-center justify-content-center text-center"
+          >
+            <div class="bg-body-secondary rounded-circle p-4 mb-3">
+              <i class="bi bi-tag fs-1 text-body-secondary"></i>
+            </div>
+
+            <h5 class="fw-bold">Válassz egy márkát</h5>
+
+            <p class="text-body-secondary mb-0">
+              Kattints egy márkára a listában a részletes adatok
+              megtekintéséhez.
+            </p>
+          </div>
+
+          <!-- KIVÁLASZTOTT MÁRKA -->
+          <div id="brand-selected" class="d-none">
+            <!-- FEJLÉC -->
+            <div class="d-flex align-items-center gap-3 mb-4">
+              <div class="bg-warning-subtle text-warning rounded-3 p-3">
+                <i class="bi bi-tag-fill fs-3"></i>
+              </div>
+
+              <div class="min-w-0">
+                <h5 id="selected-brand-name" class="fw-bold mb-1 text-truncate">
+                  -
+                </h5>
+
+                <small class="text-body-secondary"> Márka részletei </small>
+              </div>
+            </div>
+
+            <!-- STATISZTIKÁK -->
+            <div class="row g-3">
+              <!-- ELADÁS -->
+              <div class="col-12">
+                <div class="bg-primary-subtle text-primary rounded-3 p-3">
+                  <div class="small opacity-75 mb-1">Összes eladás</div>
+
+                  <div id="selected-brand-sales" class="fs-2 fw-bold">0 db</div>
+                </div>
+              </div>
+
+              <!-- TERMÉKEK -->
+              <div class="col-6">
+                <div class="bg-body-tertiary rounded-3 p-3">
+                  <div class="text-body-secondary small mb-1">Termékek</div>
+
+                  <div id="selected-brand-products" class="fs-4 fw-bold">0</div>
+                </div>
+              </div>
+
+              <!-- RÉSZESEDÉS -->
+              <div class="col-6">
+                <div class="bg-body-tertiary rounded-3 p-3">
+                  <div class="text-body-secondary small mb-1">Részesedés</div>
+
+                  <div id="selected-brand-share" class="fs-4 fw-bold">0%</div>
+                </div>
+              </div>
+
+              <!-- LEGTÖBBET ELADOTT TERMÉK -->
+              <div class="col-12">
+                <div class="bg-body-tertiary rounded-3 p-3">
+                  <div class="text-body-secondary small mb-1">
+                    Legtöbbet eladott termék
+                  </div>
+
+                  <div id="selected-brand-top-product" class="fw-bold">-</div>
+
+                  <div
+                    id="selected-brand-top-product-sales"
+                    class="small text-body-secondary mt-1"
+                  >
+                    0 db
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

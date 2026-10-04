@@ -1,0 +1,182 @@
+<div class="container-fluid h-100 overflow-hidden" style="max-height: 100vh">
+  <div class="row g-3 h-100">
+    <!-- BAL OLDAL -->
+    <div class="col-12 col-xl-5 h-100">
+      <div class="card border-0 shadow-sm rounded-4 h-100">
+        <div class="card-body p-4 d-flex flex-column">
+          <!-- FEJLÉC -->
+          <div class="d-flex align-items-center gap-3 mb-4">
+            <div class="bg-primary-subtle text-primary rounded-3 p-3">
+              <i class="bi bi-percent fs-3"></i>
+            </div>
+
+            <div>
+              <h5 class="fw-bold mb-1">ÁFA összesítés</h5>
+
+              <small class="text-body-secondary">
+                Az értékesítések ÁFA-tartalma
+              </small>
+            </div>
+          </div>
+
+          <!-- BRUTTÓ -->
+          <div class="bg-body-tertiary rounded-4 p-4 mb-3">
+            <div class="small text-body-secondary">Bruttó értékesítés</div>
+
+            <div class="display-6 fw-bold mt-1">684 500 Ft</div>
+          </div>
+
+          <!-- NETTÓ -->
+          <div class="bg-primary-subtle text-primary rounded-4 p-4 mb-3">
+            <div class="small opacity-75">Nettó értékesítés</div>
+
+            <div class="display-6 fw-bold mt-1">538 976 Ft</div>
+          </div>
+
+          <!-- ÁFA -->
+          <div class="bg-warning-subtle text-warning rounded-4 p-4 mb-4">
+            <div class="small opacity-75">Fizetendő ÁFA</div>
+
+            <div class="display-6 fw-bold mt-1">145 524 Ft</div>
+          </div>
+
+          <!-- ÁFA ARÁNY -->
+          <div class="mt-auto">
+            <div class="d-flex justify-content-between mb-2">
+              <span class="text-body-secondary"> ÁFA aránya </span>
+
+              <span class="fw-bold"> 21,3% </span>
+            </div>
+
+            <div class="progress" style="height: 10px">
+              <div class="progress-bar" style="width: 21.3%"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- KÖZÉP -->
+    <div class="col-12 col-xl-3 h-100">
+      <div class="card border-0 shadow-sm rounded-4 h-100">
+        <div class="card-body p-4 d-flex flex-column">
+          <div class="mb-4">
+            <h5 class="fw-bold mb-1">ÁFA-kulcsok</h5>
+
+            <small class="text-body-secondary">
+              Értékesítések megoszlása
+            </small>
+          </div>
+
+          <!-- 27% -->
+          <div class="border rounded-4 p-3 mb-3">
+            <div class="d-flex justify-content-between align-items-center mb-2">
+              <div class="d-flex align-items-center gap-2">
+                <span class="badge text-bg-primary rounded-pill"> 27% </span>
+
+                <span class="fw-semibold"> Általános </span>
+              </div>
+
+              <span class="fw-bold"> 72% </span>
+            </div>
+
+            <div class="progress" style="height: 7px">
+              <div class="progress-bar" style="width: 72%"></div>
+            </div>
+
+            <div class="small text-body-secondary mt-2">
+              492 840 Ft értékesítés
+            </div>
+          </div>
+
+          <!-- 18% -->
+          <div class="border rounded-4 p-3 mb-3">
+            <div class="d-flex justify-content-between align-items-center mb-2">
+              <div class="d-flex align-items-center gap-2">
+                <span class="badge text-bg-success rounded-pill"> 18% </span>
+
+                <span class="fw-semibold"> Kedvezményes </span>
+              </div>
+
+              <span class="fw-bold"> 18% </span>
+            </div>
+
+            <div class="progress" style="height: 7px">
+              <div class="progress-bar bg-success" style="width: 18%"></div>
+            </div>
+
+            <div class="small text-body-secondary mt-2">
+              123 210 Ft értékesítés
+            </div>
+          </div>
+
+          <!-- 5% -->
+          <div class="border rounded-4 p-3">
+            <div class="d-flex justify-content-between align-items-center mb-2">
+              <div class="d-flex align-items-center gap-2">
+                <span class="badge text-bg-warning rounded-pill"> 5% </span>
+
+                <span class="fw-semibold"> Kedvezményes </span>
+              </div>
+
+              <span class="fw-bold"> 10% </span>
+            </div>
+
+            <div class="progress" style="height: 7px">
+              <div class="progress-bar bg-warning" style="width: 10%"></div>
+            </div>
+
+            <div class="small text-body-secondary mt-2">
+              68 450 Ft értékesítés
+            </div>
+          </div>
+
+          <!-- KÖRDIAGRAM -->
+          <div class="mt-auto" style="height: 190px">
+            <canvas id="vat-distribution-chart"></canvas>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- JOBB OLDAL -->
+    <div class="col-12 col-xl-4 h-100">
+      <div class="card border-0 shadow-sm rounded-4 h-100">
+        <div class="card-body p-4 d-flex flex-column overflow-hidden">
+          <div class="mb-4">
+            <h5 class="fw-bold mb-1">ÁFA alakulása</h5>
+
+            <small class="text-body-secondary"> Havi ÁFA-tartalom </small>
+          </div>
+
+          <div class="position-relative flex-grow-1" style="min-height: 0">
+            <canvas id="vat-chart"></canvas>
+          </div>
+
+          <!-- ALSÓ INFORMÁCIÓ -->
+          <div class="bg-body-tertiary rounded-4 p-3 mt-3 flex-shrink-0">
+            <div class="d-flex justify-content-between">
+              <span class="text-body-secondary"> Előző hónap </span>
+
+              <span class="fw-semibold"> 128 420 Ft </span>
+            </div>
+
+            <div class="d-flex justify-content-between mt-2">
+              <span class="text-body-secondary"> Aktuális hónap </span>
+
+              <span class="fw-semibold"> 145 524 Ft </span>
+            </div>
+
+            <hr />
+
+            <div class="d-flex justify-content-between">
+              <span class="fw-bold"> Változás </span>
+
+              <span class="fw-bold text-success"> +13,3% </span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

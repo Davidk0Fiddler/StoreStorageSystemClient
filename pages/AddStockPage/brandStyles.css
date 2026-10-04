@@ -1,0 +1,633 @@
+/* =========================================
+   BRAND FILTER BAR
+========================================= */
+
+.brand-filter-bar {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 12px;
+
+  width: 100%;
+}
+
+/* =========================================
+   BRAND FILTER
+========================================= */
+
+.brand-filter {
+  position: relative;
+
+  display: flex;
+  align-items: center;
+
+  gap: 12px;
+
+  min-height: 68px;
+
+  padding: 12px 16px;
+
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+
+  background: #ffffff;
+
+  cursor: pointer;
+
+  transition:
+    border-color 0.2s ease,
+    box-shadow 0.2s ease,
+    transform 0.2s ease,
+    background-color 0.2s ease;
+}
+
+.brand-filter:hover {
+  border-color: #cbd5e1;
+
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+
+  transform: translateY(-1px);
+}
+
+/* =========================================
+   ACTIVE BRAND FILTER
+========================================= */
+
+.brand-filter.active {
+  border-color: #2563eb;
+
+  background: #ffffff;
+
+  box-shadow: 0 3px 10px rgba(37, 99, 235, 0.08);
+}
+
+.brand-filter.active::after {
+  content: "";
+
+  position: absolute;
+
+  left: 14px;
+  right: 14px;
+  bottom: 0;
+
+  height: 3px;
+
+  border-radius: 3px 3px 0 0;
+
+  background: #2563eb;
+}
+
+/* =========================================
+   BRAND FILTER ICON
+========================================= */
+
+.brand-filter-icon {
+  width: 42px;
+  height: 42px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  flex-shrink: 0;
+
+  border-radius: 10px;
+
+  background: #f3f4f6;
+  color: #6b7280;
+
+  font-size: 1.15rem;
+
+  transition:
+    background-color 0.2s ease,
+    color 0.2s ease;
+}
+
+.brand-filter.active .brand-filter-icon {
+  background: #eff6ff;
+  color: #2563eb;
+}
+
+/* =========================================
+   BRAND FILTER CONTENT
+========================================= */
+
+.brand-filter-content {
+  display: flex;
+  flex-direction: column;
+
+  gap: 3px;
+
+  min-width: 0;
+}
+
+.brand-filter-label {
+  font-size: 0.88rem;
+  font-weight: 500;
+
+  line-height: 1.2;
+
+  color: #6b7280;
+
+  white-space: nowrap;
+}
+
+.brand-filter-count {
+  font-size: 1.15rem;
+  font-weight: 700;
+
+  line-height: 1.2;
+
+  color: #111827;
+}
+
+.brand-filter.active .brand-filter-label {
+  color: #2563eb;
+}
+
+/* =========================================
+   BRAND CREATE BUTTON
+========================================= */
+
+.brand-create-wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.brand-create-button {
+  width: 100%;
+  min-height: 68px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  gap: 8px;
+
+  padding: 12px 16px;
+
+  border: 1px solid #2563eb;
+  border-radius: 12px;
+
+  background: #2563eb;
+  color: #ffffff;
+
+  font-size: 0.88rem;
+  font-weight: 600;
+
+  box-shadow: 0 3px 8px rgba(37, 99, 235, 0.16);
+
+  cursor: pointer;
+
+  transition:
+    background-color 0.2s ease,
+    border-color 0.2s ease,
+    box-shadow 0.2s ease,
+    transform 0.2s ease;
+}
+
+.brand-create-button i {
+  font-size: 1.1rem;
+}
+
+.brand-create-button:hover {
+  background: #1d4ed8;
+  border-color: #1d4ed8;
+
+  color: #ffffff;
+
+  transform: translateY(-1px);
+
+  box-shadow: 0 5px 12px rgba(37, 99, 235, 0.22);
+}
+
+.brand-create-button:active {
+  transform: translateY(0);
+}
+
+/* =========================================
+   RESPONSIVE
+========================================= */
+
+@media (max-width: 900px) {
+  .brand-filter-bar {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 450px) {
+  .brand-filter-bar {
+    grid-template-columns: 1fr;
+  }
+
+  .brand-create-button {
+    min-height: 60px;
+  }
+}
+
+/* =========================================
+   BRAND CARD
+========================================= */
+
+.brand-card {
+  border: 1px solid #e5e7eb;
+  border-radius: 14px;
+
+  background: #ffffff;
+
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.04);
+
+  transition:
+    border-color 0.2s ease,
+    box-shadow 0.2s ease,
+    transform 0.2s ease;
+}
+
+.brand-card:hover {
+  border-color: #d1d5db;
+
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.07);
+
+  transform: translateY(-2px);
+}
+
+/* =========================================
+   BRAND TITLE
+========================================= */
+
+.brand-card-title {
+  display: flex;
+  align-items: center;
+
+  gap: 12px;
+}
+
+/* =========================================
+   ICON
+========================================= */
+
+.brand-card-icon {
+  width: 42px;
+  height: 42px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  flex-shrink: 0;
+
+  border-radius: 10px;
+
+  background: #eff6ff;
+  color: #2563eb;
+
+  font-size: 1.15rem;
+}
+
+/* =========================================
+   CONTENT
+========================================= */
+
+.brand-card-content {
+  display: flex;
+  flex-direction: column;
+
+  gap: 2px;
+
+  min-width: 0;
+}
+
+.brand-card-label {
+  font-size: 0.78rem;
+  font-weight: 500;
+
+  color: #6b7280;
+}
+
+.brand-card-name {
+  font-size: 1.05rem;
+  font-weight: 700;
+
+  color: #111827;
+
+  line-height: 1.25;
+
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* =========================================
+   EDIT BUTTON
+========================================= */
+
+.brand-card-edit {
+  border: 1px solid #dbeafe;
+
+  border-radius: 8px;
+
+  background: #eff6ff;
+  color: #2563eb;
+
+  font-size: 0.84rem;
+  font-weight: 600;
+
+  transition:
+    background-color 0.2s ease,
+    border-color 0.2s ease,
+    color 0.2s ease;
+}
+
+.brand-card-edit:hover {
+  border-color: #bfdbfe;
+
+  background: #dbeafe;
+  color: #1d4ed8;
+}
+
+/* =========================================
+   BRAND CREATE MODAL
+========================================= */
+
+.brand-modal {
+  border: 1px solid #e5e7eb;
+  border-radius: 14px;
+
+  overflow: hidden;
+
+  background: #ffffff;
+
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.12);
+}
+
+/* =========================================
+   HEADER
+========================================= */
+
+.brand-modal-header {
+  display: flex;
+  align-items: center;
+
+  padding: 18px 20px;
+
+  border-bottom: 1px solid #f1f5f9;
+
+  background: #ffffff;
+}
+
+.brand-modal-title-wrapper {
+  display: flex;
+  align-items: center;
+
+  gap: 12px;
+
+  min-width: 0;
+}
+
+/* =========================================
+   MODAL ICON
+========================================= */
+
+.brand-modal-icon {
+  width: 42px;
+  height: 42px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  flex-shrink: 0;
+
+  border-radius: 10px;
+
+  background: #eff6ff;
+  color: #2563eb;
+
+  font-size: 1.15rem;
+}
+
+/* =========================================
+   TITLE
+========================================= */
+
+.brand-modal-title {
+  margin: 0;
+
+  font-size: 1rem;
+  font-weight: 700;
+
+  line-height: 1.3;
+
+  color: #111827;
+}
+
+.brand-modal-subtitle {
+  display: block;
+
+  margin-top: 2px;
+
+  font-size: 0.78rem;
+  font-weight: 400;
+
+  color: #6b7280;
+}
+
+/* =========================================
+   CLOSE BUTTON
+========================================= */
+
+.brand-modal-close {
+  margin-left: auto;
+
+  padding: 8px;
+
+  border-radius: 8px;
+
+  opacity: 0.55;
+
+  transition:
+    background-color 0.2s ease,
+    opacity 0.2s ease;
+}
+
+.brand-modal-close:hover {
+  background: #f3f4f6;
+
+  opacity: 1;
+}
+
+/* =========================================
+   BODY
+========================================= */
+
+.brand-modal-body {
+  padding: 20px;
+}
+
+/* =========================================
+   FORM
+========================================= */
+
+.brand-form-group {
+  display: flex;
+  flex-direction: column;
+
+  gap: 7px;
+}
+
+.brand-form-label {
+  margin: 0;
+
+  font-size: 0.82rem;
+  font-weight: 600;
+
+  color: #374151;
+}
+
+/* =========================================
+   INPUT
+========================================= */
+
+.brand-input-wrapper {
+  position: relative;
+}
+
+.brand-input-icon {
+  position: absolute;
+
+  top: 50%;
+  left: 13px;
+
+  z-index: 2;
+
+  color: #9ca3af;
+
+  font-size: 0.95rem;
+
+  transform: translateY(-50%);
+
+  pointer-events: none;
+}
+
+.brand-form-control {
+  min-height: 42px;
+
+  padding-left: 38px;
+
+  border: 1px solid #d1d5db;
+  border-radius: 9px;
+
+  background: #ffffff;
+
+  font-size: 0.88rem;
+
+  color: #111827;
+
+  box-shadow: none;
+
+  transition:
+    border-color 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+.brand-form-control::placeholder {
+  color: #9ca3af;
+}
+
+.brand-form-control:hover {
+  border-color: #9ca3af;
+}
+
+.brand-form-control:focus {
+  border-color: #2563eb;
+
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+}
+
+/* =========================================
+   FOOTER
+========================================= */
+
+.brand-modal-footer {
+  display: flex;
+  justify-content: flex-end;
+
+  gap: 8px;
+
+  padding: 14px 20px;
+
+  border-top: 1px solid #f1f5f9;
+
+  background: #fafafa;
+}
+
+/* =========================================
+   BUTTONS
+========================================= */
+
+.brand-modal-button {
+  min-height: 38px;
+
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  gap: 6px;
+
+  padding: 7px 14px;
+
+  border-radius: 8px;
+
+  font-size: 0.84rem;
+  font-weight: 600;
+
+  transition:
+    background-color 0.2s ease,
+    border-color 0.2s ease,
+    color 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+/* =========================================
+   CANCEL
+========================================= */
+
+.brand-cancel-button {
+  border: 1px solid #d1d5db;
+
+  background: #ffffff;
+  color: #4b5563;
+}
+
+.brand-cancel-button:hover {
+  border-color: #9ca3af;
+
+  background: #f9fafb;
+  color: #374151;
+}
+
+/* =========================================
+   SAVE
+========================================= */
+
+.brand-save-button {
+  border: 1px solid #2563eb;
+
+  background: #2563eb;
+  color: #ffffff;
+
+  box-shadow: 0 2px 5px rgba(37, 99, 235, 0.15);
+}
+
+.brand-save-button:hover {
+  border-color: #1d4ed8;
+
+  background: #1d4ed8;
+  color: #ffffff;
+
+  box-shadow: 0 4px 9px rgba(37, 99, 235, 0.2);
+}
+
+.brand-save-button:active {
+  transform: translateY(1px);
+}

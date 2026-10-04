@@ -1,0 +1,84 @@
+body {
+  min-height: 100vh;
+  position: relative;
+  /* overflow: hidden; */
+  background: #f5f7fa;
+}
+
+/* Háttér alakzatok */
+body::before,
+body::after {
+  content: "";
+  position: fixed;
+  border-radius: 50%;
+  filter: blur(80px);
+  opacity: 0.25;
+  z-index: -1;
+}
+
+body::before {
+  width: 500px;
+  height: 500px;
+  background: #0078d4;
+  top: -150px;
+  right: -100px;
+}
+
+body::after {
+  width: 400px;
+  height: 400px;
+  background: #7fba00;
+  bottom: -150px;
+  left: -100px;
+}
+
+.background-shapes {
+  position: fixed;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+  z-index: -1;
+}
+
+.shape {
+  position: absolute;
+  border-radius: 30%;
+  filter: blur(60px);
+  opacity: 0.15;
+}
+
+.shape-1 {
+  width: 450px;
+  height: 450px;
+  background: #0078d4;
+  top: -150px;
+  left: -100px;
+  transform: rotate(25deg);
+}
+
+.shape-2 {
+  width: 350px;
+  height: 350px;
+  background: #5c2d91;
+  top: 30%;
+  right: -100px;
+  transform: rotate(45deg);
+}
+
+.shape-3 {
+  width: 300px;
+  height: 300px;
+  background: #107c10;
+  bottom: -100px;
+  left: 20%;
+  border-radius: 50%;
+}
+
+.shape-4 {
+  width: 250px;
+  height: 250px;
+  background: #ffb900;
+  top: 20%;
+  left: 45%;
+  transform: rotate(20deg);
+}

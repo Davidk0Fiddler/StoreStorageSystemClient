@@ -1,0 +1,46 @@
+.menu-btn {
+  min-height: 190px;
+  font-size: 2.2rem;
+
+  border-width: 2px !important;
+  border-radius: 1rem !important;
+
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease,
+    background-color 0.2s ease;
+}
+
+.menu-btn i {
+  font-size: 4rem;
+  line-height: 1;
+}
+
+.menu-btn:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);
+}
+
+.menu-btn:active {
+  transform: translateY(-1px);
+}
+
+.clickable-alert {
+  cursor: pointer;
+  transition:
+    transform 0.15s ease,
+    box-shadow 0.15s ease;
+}
+
+.clickable-alert:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.1) !important;
+}
+
+.clickable-alert:active {
+  transform: translateY(0);
+}
+
+#expiration-alert-progress {
+  transform-origin: left;
+}

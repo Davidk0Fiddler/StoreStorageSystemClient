@@ -1,0 +1,151 @@
+<div id="top-products-panel" class="container-fluid h-100">
+  <div class="row g-3 h-100">
+    <!-- =====================================================
+         ÖSSZESÍTETT ELADÁS
+         ===================================================== -->
+
+    <div class="col-12 col-xl-4">
+      <div class="card border-0 shadow-sm rounded-4 h-100">
+        <div class="card-body p-4 d-flex flex-column">
+          <div class="d-flex align-items-center gap-3 mb-4">
+            <div class="bg-primary-subtle text-primary rounded-3 p-3">
+              <i class="bi bi-trophy-fill fs-3"></i>
+            </div>
+
+            <div>
+              <h5 class="fw-bold mb-1">Összesített eladás</h5>
+
+              <small class="text-body-secondary">
+                A lekérdezett termékek alapján
+              </small>
+            </div>
+          </div>
+
+          <div class="text-center my-auto">
+            <div id="sold-products-total" class="display-3 fw-bold">0 db</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- =====================================================
+         TOP TERMÉKEK
+         ===================================================== -->
+
+    <div class="col-12 col-xl-4">
+      <div class="card border-0 shadow-sm rounded-4 h-100">
+        <div class="card-body p-4 d-flex flex-column">
+          <div class="d-flex align-items-center gap-3 mb-4">
+            <div class="bg-success-subtle text-success rounded-3 p-3">
+              <i class="bi bi-bar-chart-fill fs-3"></i>
+            </div>
+
+            <div>
+              <h5 class="fw-bold mb-1">Legtöbbet vásárolt termékek</h5>
+
+              <small class="text-body-secondary"> Termékek rangsora </small>
+            </div>
+          </div>
+
+          <div
+            id="sold-products-list"
+            class="d-flex flex-column gap-2 overflow-auto"
+          >
+            <div class="text-center text-body-secondary py-4">
+              <i class="bi bi-box-seam fs-2 d-block mb-2"></i>
+
+              Nincs betölthető adat
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- =====================================================
+         KIVÁLASZTOTT TERMÉK
+         ===================================================== -->
+
+    <div class="col-12 col-xl-4">
+      <div class="card border-0 shadow-sm rounded-4 h-100">
+        <div class="card-body p-4">
+          <!-- ÜRES ÁLLAPOT -->
+
+          <div
+            id="sold-product-empty"
+            class="h-100 d-flex flex-column align-items-center justify-content-center text-center"
+          >
+            <div class="bg-body-secondary rounded-circle p-4 mb-3">
+              <i class="bi bi-box-seam fs-1 text-body-secondary"></i>
+            </div>
+
+            <h5 class="fw-bold">Válassz egy terméket</h5>
+
+            <p class="text-body-secondary mb-0">
+              Kattints egy termékre a listában a részletes adatok
+              megtekintéséhez.
+            </p>
+          </div>
+
+          <!-- KIVÁLASZTOTT TERMÉK -->
+
+          <div id="sold-product-selected" class="d-none">
+            <div class="d-flex align-items-center gap-3 mb-4">
+              <div class="bg-warning-subtle text-warning rounded-3 p-3">
+                <i class="bi bi-box-seam-fill fs-3"></i>
+              </div>
+
+              <div class="min-w-0">
+                <h5
+                  id="selected-product-name"
+                  class="fw-bold mb-1 text-truncate"
+                >
+                  -
+                </h5>
+
+                <small id="selected-product-sku" class="text-body-secondary">
+                  -
+                </small>
+              </div>
+            </div>
+
+            <div class="row g-3">
+              <!-- ELADOTT MENNYISÉG -->
+
+              <div class="col-12">
+                <div class="bg-primary-subtle text-primary rounded-3 p-3">
+                  <div class="small opacity-75 mb-1">Összes vásárlás</div>
+
+                  <div id="selected-product-total" class="fs-2 fw-bold">
+                    0 db
+                  </div>
+                </div>
+              </div>
+
+              <!-- MÁRKA -->
+
+              <div class="col-12">
+                <div class="bg-body-tertiary rounded-3 p-3">
+                  <div class="text-body-secondary small mb-1">Márka</div>
+
+                  <div id="selected-product-brand" class="fw-semibold">-</div>
+                </div>
+              </div>
+
+              <!-- SKU -->
+
+              <div class="col-12">
+                <div class="bg-body-tertiary rounded-3 p-3">
+                  <div class="text-body-secondary small mb-1">SKU</div>
+
+                  <div id="selected-product-sku-detail" class="fw-semibold">
+                    -
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
