@@ -1,0 +1,30 @@
+.addstock-btn {
+  width: 400px;
+  height: 350px;
+  cursor: pointer;
+}
+
+.addstock-btn-body {
+  height: 100%;
+}
+
+.product-card {
+  height: 240px;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.product-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+}
+
+.product-card.selected {
+  border: 3px solid #0d6efd;
+  box-shadow: 0 0 12px rgba(13, 110, 253, 0.4);
+}
+
+.product-image {
+  height: 150px;
+  object-fit: contain;
+}
