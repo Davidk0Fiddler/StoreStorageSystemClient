@@ -20,7 +20,7 @@ function InitializeExitButton() {
     sessionStorage.removeItem("userName");
     sessionStorage.removeItem("roleName");
 
-    GoToPage("../LoginPage/LoginPage.html");
+    window.location.href = "../LoginPage/LoginPage.html";
   });
 }
 
