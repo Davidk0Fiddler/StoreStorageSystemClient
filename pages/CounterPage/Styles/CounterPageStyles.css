@@ -1,0 +1,581 @@
+.counter-module-btn {
+  width: 400px;
+  height: 350px;
+  cursor: pointer;
+}
+
+.counter-module-btn-body {
+  height: 100%;
+}
+.product-image {
+  width: 100%;
+  height: 160px;
+  object-fit: contain;
+}
+.product-card {
+  transition: 0.2s;
+  border: 1px solid var(--bs-border-color);
+}
+
+.product-card.selected {
+  border: 3px solid var(--bs-primary);
+  box-shadow: 0 0 12px rgba(13, 110, 253, 0.35);
+}
+
+/* =========================================
+   KASSZA MODAL
+========================================= */
+
+.cashier-modal {
+  background: #f5f6f8;
+  border: none;
+}
+
+/* =========================================
+   HEADER
+========================================= */
+
+.cashier-header {
+  height: 75px;
+  min-height: 75px;
+
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  padding: 0 25px;
+
+  background: #ffffff;
+  border-bottom: 1px solid #dee2e6;
+}
+
+/* =========================================
+   MAIN
+========================================= */
+
+.cashier-body {
+  display: flex;
+
+  width: 100%;
+  height: calc(100vh - 75px);
+
+  overflow: hidden;
+}
+
+/* =========================================
+   BAL OLDAL
+========================================= */
+
+.products-panel {
+  width: 68%;
+  height: 100%;
+
+  display: flex;
+  flex-direction: column;
+
+  padding: 20px;
+
+  background: #f5f6f8;
+}
+
+/* =========================================
+   KERESŐ
+========================================= */
+
+.product-search {
+  flex-shrink: 0;
+
+  margin-bottom: 15px;
+}
+
+.product-search input {
+  min-height: 58px;
+
+  font-size: 18px;
+}
+
+.product-search .input-group-text {
+  font-size: 20px;
+}
+
+/* =========================================
+   TERMÉKLISTA
+========================================= */
+
+.product-list {
+  flex: 1;
+
+  display: grid;
+
+  grid-template-columns: repeat(auto-fill, minmax(210px, 1fr));
+
+  gap: 15px;
+
+  overflow-y: auto;
+
+  padding: 5px;
+
+  align-content: start;
+}
+
+/* Scrollbar */
+
+.product-list::-webkit-scrollbar,
+.cart-list::-webkit-scrollbar {
+  width: 8px;
+}
+
+.product-list::-webkit-scrollbar-thumb,
+.cart-list::-webkit-scrollbar-thumb {
+  background: #c7cbd1;
+  border-radius: 10px;
+}
+
+/* =========================================
+   TERMÉKKÁRTYA
+========================================= */
+
+.cashier-product-card {
+  min-height: 175px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  padding: 18px;
+
+  background: #ffffff;
+
+  border: 2px solid transparent;
+  border-radius: 14px;
+
+  cursor: pointer;
+
+  user-select: none;
+
+  transition:
+    transform 0.12s ease,
+    border-color 0.12s ease,
+    box-shadow 0.12s ease;
+
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+}
+
+/* Érintőképernyőn jó visszajelzés */
+
+.cashier-product-card:hover {
+  border-color: #0d6efd;
+
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.1);
+}
+
+.cashier-product-card:active {
+  transform: scale(0.97);
+}
+
+/* =========================================
+   TERMÉKKÁRTYA TARTALOM
+========================================= */
+
+.cashier-product-card {
+  height: 230px;
+  border: 2px solid #dee2e6;
+  border-radius: 12px;
+  background: #fff;
+  overflow: hidden;
+  cursor: pointer;
+  transition: 0.2s ease;
+
+  display: flex;
+  flex-direction: column;
+}
+
+.cashier-product-card:hover {
+  border-color: #0d6efd;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
+}
+
+.cashier-product-card:active {
+  transform: scale(0.98);
+}
+
+.product-card-image {
+  height: 165px;
+  width: 100%;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  padding: 10px;
+}
+
+.product-card-image img {
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+}
+
+.product-card-content {
+  flex: 1;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  padding: 8px 12px;
+}
+
+.product-card-title {
+  font-size: 18px;
+  font-weight: 600;
+  text-align: center;
+
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+/* =========================================
+   JOBB OLDAL / KOSÁR
+========================================= */
+
+.cart-panel {
+  width: 32%;
+  height: 100%;
+
+  display: flex;
+  flex-direction: column;
+
+  background: #ffffff;
+
+  border-left: 1px solid #dee2e6;
+}
+
+/* =========================================
+   KOSÁR HEADER
+========================================= */
+
+.cart-header {
+  flex-shrink: 0;
+
+  padding: 20px;
+
+  border-bottom: 1px solid #dee2e6;
+}
+
+/* =========================================
+   KOSÁR LISTA
+========================================= */
+
+.cart-list {
+  flex: 1;
+
+  overflow-y: auto;
+
+  padding: 15px;
+}
+
+/* =========================================
+   ÜRES KOSÁR
+========================================= */
+
+.empty-cart {
+  height: 100%;
+
+  display: flex;
+  flex-direction: column;
+
+  align-items: center;
+  justify-content: center;
+
+  text-align: center;
+
+  color: #6c757d;
+}
+
+.empty-cart-icon {
+  font-size: 45px;
+
+  margin-bottom: 10px;
+}
+
+/* =========================================
+   KOSÁR ELEM
+========================================= */
+.cashier-cart-item {
+  background: #ffffff;
+  border: 1px solid #dee2e6;
+  border-radius: 12px;
+  padding: 14px 16px;
+  margin-bottom: 10px;
+
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.06);
+}
+
+.cart-item-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.cart-item-name {
+  font-size: 19px;
+  font-weight: 600;
+
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.cart-item-remove {
+  width: 40px;
+  height: 40px;
+
+  border: none;
+  border-radius: 8px;
+
+  background: #f8d7da;
+  color: #842029;
+
+  font-size: 25px;
+  font-weight: 600;
+
+  cursor: pointer;
+}
+
+.cart-item-info {
+  display: flex;
+  gap: 12px;
+
+  margin-top: 4px;
+
+  font-size: 14px;
+  color: #6c757d;
+}
+
+.cart-item-bottom {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  margin-top: 12px;
+}
+
+.cart-item-quantity {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.quantity-btn {
+  width: 42px;
+  height: 42px;
+
+  border: 1px solid #ced4da;
+  border-radius: 8px;
+
+  background: #f8f9fa;
+
+  font-size: 22px;
+  font-weight: 600;
+
+  cursor: pointer;
+}
+
+.quantity-value {
+  min-width: 35px;
+
+  text-align: center;
+
+  font-size: 18px;
+  font-weight: 600;
+}
+
+.cart-item-price {
+  font-size: 20px;
+  font-weight: 700;
+}
+/* =========================================
+   FOOTER
+========================================= */
+
+.cart-footer {
+  flex-shrink: 0;
+
+  padding: 20px;
+
+  background: #ffffff;
+
+  border-top: 1px solid #dee2e6;
+}
+
+/* =========================================
+   ÖSSZEG
+========================================= */
+
+.total-row {
+  display: flex;
+
+  align-items: center;
+  justify-content: space-between;
+
+  margin-bottom: 15px;
+}
+
+.total-row span {
+  font-size: 18px;
+  color: #495057;
+}
+
+.total-row strong {
+  font-size: 27px;
+}
+
+/* =========================================
+   VÉGLEGESÍTÉS
+========================================= */
+
+#checkout-button {
+  min-height: 60px;
+
+  font-size: 19px;
+  font-weight: 600;
+}
+
+/* =========================================
+   TOUCHSCREEN
+========================================= */
+
+@media (pointer: coarse) {
+  .cashier-product-card {
+    min-height: 190px;
+  }
+
+  .cashier-product-card:hover {
+    border-color: transparent;
+  }
+
+  .cashier-product-card:active {
+    border-color: #0d6efd;
+  }
+
+  .cart-item {
+    padding: 18px;
+  }
+}
+
+.quantity-overlay {
+  position: fixed;
+  inset: 0;
+
+  background: rgba(0, 0, 0, 0.55);
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  z-index: 9999;
+}
+
+.quantity-modal {
+  width: 420px;
+  max-width: 90vw;
+
+  background: #fff;
+  border-radius: 18px;
+
+  padding: 24px;
+
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.25);
+}
+
+.quantity-modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.quantity-modal-header h3 {
+  margin: 0;
+
+  font-size: 24px;
+  font-weight: 600;
+}
+
+.quantity-close-btn {
+  width: 42px;
+  height: 42px;
+
+  border: none;
+  border-radius: 10px;
+
+  background: #f1f3f5;
+
+  font-size: 28px;
+  line-height: 1;
+
+  cursor: pointer;
+}
+
+.quantity-product-name {
+  margin-top: 20px;
+
+  text-align: center;
+
+  font-size: 20px;
+  font-weight: 600;
+}
+
+.quantity-input-wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  margin-top: 20px;
+}
+
+.quantity-input-wrapper input {
+  width: 180px;
+  height: 65px;
+
+  border: 2px solid #0d6efd;
+  border-radius: 10px 0 0 10px;
+
+  font-size: 30px;
+  font-weight: 600;
+
+  text-align: center;
+}
+
+.quantity-input-wrapper span {
+  height: 65px;
+
+  display: flex;
+  align-items: center;
+
+  padding: 0 18px;
+
+  background: #e9ecef;
+
+  border-radius: 0 10px 10px 0;
+
+  font-size: 22px;
+  font-weight: 600;
+}
+
+.quantity-actions {
+  display: flex;
+  gap: 12px;
+
+  margin-top: 25px;
+}
+
+.quantity-actions button {
+  flex: 1;
+
+  height: 55px;
+
+  font-size: 18px;
+}
