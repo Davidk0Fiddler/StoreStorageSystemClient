@@ -1,57 +1,50 @@
 import SendingLoginRequest from "../../scripts/api/SendLoginRequest.js";
 
 const usernameField = document.getElementById("login-username-field");
-const passwordField = document.getElementById("login-password-field");
-const loginButton = document.getElementById("login-button");
 
-const tooltipElement = document.querySelector('[data-bs-toggle="tooltip"]');
+const passwordField = document.getElementById("login-password-field");
+
+const loginButton = document.getElementById("login-button");
 
 const togglePasswordButton = document.getElementById("toggle-password-button");
 
-togglePasswordButton.addEventListener("click", () => {
-  const icon = togglePasswordButton.querySelector("i");
-
-  if (passwordField.type === "password") {
-    passwordField.type = "text";
-
-    icon.classList.remove("bi-eye");
-    icon.classList.add("bi-eye-slash");
-  } else {
-    passwordField.type = "password";
-
-    icon.classList.remove("bi-eye-slash");
-    icon.classList.add("bi-eye");
-  }
-});
+const tooltipElement = document.querySelector('[data-bs-toggle="tooltip"]');
 
 const tooltip = new bootstrap.Tooltip(tooltipElement);
-document.addEventListener("DOMContentLoaded", () => {
-  function validateFields() {
-    const username = usernameField.value.trim();
-    const password = passwordField.value.trim();
 
-    if (username !== "" && password !== "") {
-      loginButton.disabled = false;
-      loginButton.classList.remove("btn-secondary");
-      loginButton.classList.add("btn-primary");
-      tooltip.disable();
-    } else {
-      loginButton.disabled = true;
-      loginButton.classList.remove("btn-primary");
-      loginButton.classList.add("btn-secondary");
-      tooltip.enable();
-    }
+function ValidateFields() {
+  const username = usernameField.value.trim();
+
+  const password = passwordField.value.trim();
+
+  const isValid = username !== "" && password !== "";
+
+  loginButton.disabled = !isValid;
+
+  loginButton.classList.toggle("btn-primary", isValid);
+
+  loginButton.classList.toggle("btn-secondary", !isValid);
+
+  if (isValid) {
+    tooltip.disable();
+  } else {
+    tooltip.enable();
   }
+}
 
-  usernameField.addEventListener("input", validateFields);
-  passwordField.addEventListener("input", validateFields);
+function TogglePasswordVisibility() {
+  const icon = togglePasswordButton.querySelector("i");
 
-  validateFields();
-});
+  const isPassword = passwordField.type === "password";
 
-// Alert function
+  passwordField.type = isPassword ? "text" : "password";
 
-function AlertIcon(type) {
+  icon.classList.toggle("bi-eye", !isPassword);
+
+  icon.classList.toggle("bi-eye-slash", isPassword);
+}
+
+function GetAlertIcon(type) {
   switch (type) {
     case "success":
       return "bi bi-check-circle-fill";
@@ -70,13 +63,11 @@ function AlertIcon(type) {
   }
 }
 
-async function DisplayAlert(type, message) {
+function DisplayAlert(type, message) {
   const alertPlaceholder = document.getElementById("liveAlertPlaceholder");
 
-  // Korábbi alert eltávolítása
   alertPlaceholder.innerHTML = "";
 
-  // Alert létrehozása
   const wrapper = document.createElement("div");
 
   wrapper.innerHTML = `
@@ -85,7 +76,7 @@ async function DisplayAlert(type, message) {
       role="alert"
     >
       <div class="modern-alert-icon">
-        <i class="${AlertIcon(type)}"></i>
+        <i class="${GetAlertIcon(type)}"></i>
       </div>
 
       <div class="modern-alert-message">
@@ -104,14 +95,12 @@ async function DisplayAlert(type, message) {
     </div>
   `;
 
-  // Alert hozzáadása a DOM-hoz
   alertPlaceholder.appendChild(wrapper);
 
-  // Most már biztosan létezik az elem
   const alertElement = wrapper.querySelector(".modern-alert");
+
   const closeButton = wrapper.querySelector(".modern-alert-close");
 
-  // Bezárás függvény
   const closeAlert = () => {
     if (!alertElement || !alertElement.isConnected) {
       return;
@@ -126,30 +115,22 @@ async function DisplayAlert(type, message) {
     }, 150);
   };
 
-  // X gomb
   closeButton.addEventListener("click", closeAlert);
 
-  // Automatikus bezárás 5 másodperc után
-  setTimeout(() => {
-    closeAlert();
-  }, 3000);
+  setTimeout(closeAlert, 3000);
 }
 
-function LoadingSpinner(isLoading) {
+function SetLoadingState(isLoading) {
   const spinningOverlay = document.getElementById("spinning-overlay");
-  if (isLoading) {
-    spinningOverlay.classList.remove("d-none");
-  } else {
-    spinningOverlay.classList.add("d-none");
-  }
+
+  spinningOverlay.classList.toggle("d-none", !isLoading);
 }
 
-// Login
-document.getElementById("login-button").addEventListener("click", async (e) => {
-  e.preventDefault();
+async function HandleLogin(event) {
+  event.preventDefault();
 
   try {
-    LoadingSpinner(true);
+    SetLoadingState(true);
 
     const response = await SendingLoginRequest(
       usernameField.value.trim(),
@@ -157,19 +138,38 @@ document.getElementById("login-button").addEventListener("click", async (e) => {
     );
 
     sessionStorage.setItem("roleName", response.roleName);
+
     sessionStorage.setItem("token", response.token);
+
     sessionStorage.setItem("userName", response.userName);
 
-    await DisplayAlert("success", `Sikeres bejelentkezés! Átirányítás...`);
+    DisplayAlert("success", "Sikeres bejelentkezés! Átirányítás...");
 
-    setTimeout(
-      () => (window.location.href = "../LandingPage/LandingPage.html"),
-      3000,
-    );
+    setTimeout(() => {
+      window.location.href = "../LandingPage/LandingPage.html";
+    }, 3000);
   } catch (error) {
     DisplayAlert("danger", error.message);
+
     console.error(error);
   } finally {
-    LoadingSpinner(false);
+    SetLoadingState(false);
   }
-});
+}
+
+function InitializeEventListeners() {
+  usernameField.addEventListener("input", ValidateFields);
+
+  passwordField.addEventListener("input", ValidateFields);
+
+  togglePasswordButton.addEventListener("click", TogglePasswordVisibility);
+
+  loginButton.addEventListener("click", HandleLogin);
+}
+
+function InitializePage() {
+  InitializeEventListeners();
+  ValidateFields();
+}
+
+InitializePage();
