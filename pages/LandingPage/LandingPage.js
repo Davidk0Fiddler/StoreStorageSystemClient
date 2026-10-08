@@ -1,120 +1,124 @@
 import RequestExpirationCheck from "../../scripts/api/RequestExpirationCheck.js";
 
-document.getElementById("brand-name").innerHTML =
-  `Hello ${sessionStorage.getItem("userName")}! <i class="bi bi-person-fill" style="cursor:pointer" data-bs-toggle="modal" data-bs-target="#user-data-modal"></i>`;
+function InitializeUserData() {
+  const userName = sessionStorage.getItem("userName");
+  const roleName = sessionStorage.getItem("roleName");
 
-document.getElementById("user-name").textContent =
-  sessionStorage.getItem("userName");
+  document.getElementById("brand-name").innerHTML =
+    `Hello ${userName}! <i class="bi bi-person-fill" style="cursor:pointer" data-bs-toggle="modal" data-bs-target="#user-data-modal"></i>`;
 
-document.getElementById("role-name").textContent =
-  sessionStorage.getItem("roleName");
+  document.getElementById("user-name").textContent = userName;
 
-document.getElementById("exit-app-button").addEventListener("click", () => {
-  sessionStorage.removeItem("token");
-  sessionStorage.removeItem("userName");
-  sessionStorage.removeItem("roleName");
-
-  GoToPage("../LoginPage/LoginPage.html");
-});
-
-function GoToPage(page) {
-  window.location.href = page;
+  document.getElementById("role-name").textContent = roleName;
 }
 
-window.GoToPage = GoToPage;
+function InitializeExitButton() {
+  const exitButton = document.getElementById("exit-app-button");
+
+  exitButton?.addEventListener("click", () => {
+    sessionStorage.removeItem("token");
+    sessionStorage.removeItem("userName");
+    sessionStorage.removeItem("roleName");
+
+    GoToPage("../LoginPage/LoginPage.html");
+  });
+}
 
 const pageButtons = [
   {
     requiredRoles: ["Admin", "Counter"],
-    pageButtonData: `<!-- Kassza mód gomb-->
-          <div class="col-12 col-md-6" onclick="GoToPage('../CounterPage/CounterPage.html')">
-            <div
-              class="btn btn-outline-primary menu-btn w-100 d-flex align-items-center justify-content-center gap-3 border-3 rounded"
-            >
-              <i class="bi bi-shop-window fs-2"></i>
-              <span class="fs-2 fw-bold">Kassza mód</span>
-            </div>
-          </div>`,
+    page: "../CounterPage/CounterPage.html",
+    icon: "bi-shop-window",
+    title: "Kassza mód",
   },
   {
     requiredRoles: ["Admin", "Storage"],
-    pageButtonData: `<!-- Áru felvétel-->
-          <div class="col-12 col-md-6" onclick="GoToPage('../AddStockPage/AddStockPage.html')">
-            <div
-              class="btn btn-outline-primary menu-btn w-100 d-flex align-items-center justify-content-center gap-3 border-3 rounded"
-            >
-              <i class="bi bi-clipboard2-plus fs-2"></i>
-              <span class="fs-2 fw-bold">Áru felvétel</span>
-            </div>
-          </div>`,
+    page: "../AddStockPage/AddStockPage.html",
+    icon: "bi-clipboard2-plus",
+    title: "Áru felvétel",
   },
   {
     requiredRoles: ["Admin", "Storage", "Counter"],
-    pageButtonData: `<!-- Áru panel gomb-->
-          <div class="col-12 col-md-6" onclick="GoToPage('../StockPanel/StockPanel.html')">
-            <div
-              class="btn btn-outline-primary menu-btn w-100 d-flex align-items-center justify-content-center gap-3 border-3 rounded"
-            >
-              <i class="bi bi-box-seam fs-2"></i>
-              <span class="fs-2 fw-bold">Áru Panel</span>
-            </div>
-          </div>`,
+    page: "../StockPanel/StockPanel.html",
+    icon: "bi-box-seam",
+    title: "Áru Panel",
   },
   {
     requiredRoles: ["Admin"],
-    pageButtonData: `<!-- Felhasználó panel gomb-->
-          <div class="col-12 col-md-6" onclick="GoToPage('../ProfilPanel/ProfilPanel.html')">
-            <div
-              class="btn btn-outline-primary menu-btn w-100 d-flex align-items-center justify-content-center gap-3 border-3 rounded"
-            >
-              <i class="bi bi-people fs-2"></i>
-              <span class="fs-2 fw-bold">Profil Panel</span>
-            </div>
-          </div>`,
+    page: "../ProfilPanel/ProfilPanel.html",
+    icon: "bi-people",
+    title: "Profil Panel",
   },
   {
     requiredRoles: ["Admin"],
-    pageButtonData: `<!-- Statisztika panel gomb-->
-          <div class="col-12 col-md-6" onclick="GoToPage('../StatisticsPanel/StatisticsPanel.html')">
-            <div
-              class="btn btn-outline-primary menu-btn w-100 d-flex align-items-center justify-content-center gap-3 border-3 rounded"
-            >
-              <i class="bi bi-clipboard-data fs-2"></i>
-              <span class="fs-2 fw-bold">Statisztika Panel</span>
-            </div>
-          </div>`,
+    page: "../StatisticsPanel/StatisticsPanel.html",
+    icon: "bi-clipboard-data",
+    title: "Statisztika Panel",
   },
   {
     requiredRoles: ["Admin"],
-    pageButtonData: `<!-- Admin panel gomb-->
-          <div class="col-12 col-md-6" onclick="GoToPage('../AdminPanel/AdminPanel.html')">
-            <div
-              class="btn btn-outline-primary menu-btn w-100 d-flex align-items-center justify-content-center gap-3 border-3 rounded"
-            >
-              <i class="bi bi-shield fs-2"></i>
-              <span class="fs-2 fw-bold">Admin Panel</span>
-            </div>
-          </div>`,
+    page: "../AdminPanel/AdminPanel.html",
+    icon: "bi-shield",
+    title: "Admin Panel",
   },
 ];
 
-const buttonContainer = document.getElementById("button-container");
-buttonContainer.innerHTML = " ";
-const roleName = sessionStorage.getItem("roleName");
+function CreatePageButton(button) {
+  const wrapper = document.createElement("div");
 
-pageButtons.forEach((button) => {
-  if (button.requiredRoles.includes(roleName)) {
-    buttonContainer.innerHTML += button.pageButtonData;
+  wrapper.classList.add("col-12", "col-md-6");
+
+  wrapper.innerHTML = `
+    <div
+      class="btn btn-outline-primary menu-btn w-100 d-flex align-items-center justify-content-center gap-3 border-3 rounded"
+    >
+      <i class="bi ${button.icon} fs-2"></i>
+      <span class="fs-2 fw-bold">
+        ${button.title}
+      </span>
+    </div>
+  `;
+
+  const buttonElement = wrapper.firstElementChild;
+
+  buttonElement.addEventListener("click", () => {
+    window.location.href = button.page;
+  });
+
+  return wrapper;
+}
+
+function InitializePageButtons() {
+  const buttonContainer = document.getElementById("button-container");
+
+  if (!buttonContainer) {
+    return;
   }
-});
+
+  buttonContainer.innerHTML = "";
+
+  const roleName = sessionStorage.getItem("roleName");
+
+  pageButtons.forEach((button) => {
+    if (!button.requiredRoles.includes(roleName)) {
+      return;
+    }
+
+    const pageButton = CreatePageButton(button);
+
+    buttonContainer.appendChild(pageButton);
+  });
+}
 
 // EXPIRATION ALERT
 
 let alertTimeout;
 let alertAnimation;
+let expiringElements = [];
 
 function ShowExpiringProductAlert() {
   const alertElement = document.getElementById("expiration-alert");
+
   const progressElement = document.getElementById("expiration-alert-progress");
 
   clearTimeout(alertTimeout);
@@ -127,6 +131,7 @@ function ShowExpiringProductAlert() {
 
   requestAnimationFrame(() => {
     progressElement.style.transition = "transform 10s linear";
+
     progressElement.style.transform = "scaleX(0)";
   });
 
@@ -135,28 +140,17 @@ function ShowExpiringProductAlert() {
   }, 10000);
 }
 
-var expiringElements = [];
-
 async function ExpirationCheck() {
-  var result = await RequestExpirationCheck();
+  const result = await RequestExpirationCheck();
 
   console.log(result);
 
   if (result.isAnyExpiring) {
     expiringElements = result.expiringStocks;
+
     ShowExpiringProductAlert();
   }
 }
-
-document.getElementById("expiration-alert").addEventListener("click", () => {
-  const alertElement = document.getElementById("expiration-alert");
-  const progressElement = document.getElementById("expiration-alert-progress");
-  clearTimeout(alertTimeout);
-  cancelAnimationFrame(alertAnimation);
-  alertElement.classList.add("d-none");
-
-  FillExpiringProducts(expiringElements);
-});
 
 function FillExpiringProducts(products) {
   const tableBody = document.getElementById("expiring-products-table-body");
@@ -165,7 +159,9 @@ function FillExpiringProducts(products) {
 
   tableBody.innerHTML = "";
 
-  productCount.textContent = `${products.length} ${products.length === 1 ? "termék" : "termék"}`;
+  productCount.textContent = `${products.length} ${
+    products.length === 1 ? "termék" : "termék"
+  }`;
 
   products.forEach((product) => {
     const row = document.createElement("tr");
@@ -244,4 +240,25 @@ function FillExpiringProducts(products) {
   modal.show();
 }
 
+function InitializeExpirationAlert() {
+  const alertElement = document.getElementById("expiration-alert");
+
+  alertElement?.addEventListener("click", () => {
+    clearTimeout(alertTimeout);
+    cancelAnimationFrame(alertAnimation);
+
+    alertElement.classList.add("d-none");
+
+    FillExpiringProducts(expiringElements);
+  });
+}
+
+function InitializePage() {
+  InitializeUserData();
+  InitializeExitButton();
+  InitializePageButtons();
+  InitializeExpirationAlert();
+}
+
+InitializePage();
 await ExpirationCheck();
