@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en">
+<html lang="hu">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -132,6 +132,7 @@
                       <img
                         id="modal-product-image"
                         src="https://placehold.co/300"
+                        alt="Termék képe"
                         class="img-fluid rounded-4 border shadow-sm mb-4"
                         style="max-height: 300px; object-fit: contain"
                       />
@@ -219,7 +220,6 @@
                                 id="edit-shopquantity-btn"
                                 class="d-none btn btn-outline-primary btn-sm"
                                 type="button"
-                                onclick="OpenUpdateShopQuantityModal()"
                               >
                                 <i class="bi bi-pencil-fill"></i>
                               </button>
@@ -244,7 +244,6 @@
                                 id="edit-price-btn"
                                 class="d-none btn btn-outline-primary btn-sm"
                                 type="button"
-                                onclick="OpenUpdatePriceModal()"
                               >
                                 <i class="bi bi-pencil-fill"></i>
                               </button>
@@ -371,7 +370,7 @@
                     id="stock-search-filter-select"
                     class="form-select rounded-3"
                   >
-                    <option value="nev" default>Név alapján</option>
+                    <option value="nev" selected>Név alapján</option>
                     <option value="vonalkod">Vonalkód alapján</option>
                     <option value="sku">Belső azonosító alapján</option>
                     <option value="termektipus">Terméktípus alapján</option>
