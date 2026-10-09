@@ -17,6 +17,7 @@ import {
 import { RenderUserList } from "../ui/UserList.js";
 
 import {
+  RenderUserFilter,
   GetUserFilterButtons,
   SetActiveUserFilter,
   GetUsersByFilter,
@@ -198,15 +199,14 @@ function InitializeUserCardEvents() {
 async function ActivateSelectedUser(username) {
   const response = await ActivateUser(username);
 
-  if (response === true) {
-    DisplayAlert("success", "Sikeres aktiválás!");
-
-    await LoadUsers();
-
+  if (!response.success) {
+    DisplayAlert("danger", response.message);
     return;
   }
 
-  DisplayAlert("danger", response);
+  await LoadUsers();
+
+  DisplayAlert("success", "Sikeres aktiválás!");
 }
 
 /*
@@ -215,15 +215,14 @@ async function ActivateSelectedUser(username) {
 async function DeactivateSelectedUser(username) {
   const response = await DeactivateUser(username);
 
-  if (response === true) {
-    DisplayAlert("success", "Sikeres deaktiválás!");
-
-    await LoadUsers();
-
+  if (!response.success) {
+    DisplayAlert("danger", response.message);
     return;
   }
 
-  DisplayAlert("danger", response);
+  await LoadUsers();
+
+  DisplayAlert("success", "Sikeres deaktiválás!");
 }
 
 /*
@@ -385,6 +384,10 @@ function InitializePanel() {
  * User Feature indítása
  */
 export async function InitializeUserFeature() {
+  if (!RenderUserFilter()) {
+    return;
+  }
+
   InitializePanel();
 
   const panelLabel = document.getElementById("panel-label");
