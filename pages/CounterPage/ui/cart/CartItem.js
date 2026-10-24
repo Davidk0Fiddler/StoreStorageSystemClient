@@ -1,3 +1,5 @@
+import { EscapeHtml } from "../../../shared/Html.js";
+
 export function CreateCartItem(selectedProduct, index) {
   const cartItem = document.createElement("div");
 
@@ -14,7 +16,7 @@ export function CreateCartItem(selectedProduct, index) {
     <div class="d-flex justify-content-between align-items-start">
 
       <div class="fs-3 fw-semibold text-truncate pe-2">
-        ${selectedProduct.product.productName}
+        ${EscapeHtml(selectedProduct.product.productName)}
       </div>
 
       <button
@@ -28,7 +30,7 @@ export function CreateCartItem(selectedProduct, index) {
     </div>
 
     <div class="small text-secondary mt-1">
-      ${selectedProduct.product.afaPercent}% ÁFA
+      ${EscapeHtml(selectedProduct.product.afaPercent)}% ÁFA
     </div>
 
     <div class="d-flex justify-content-between align-items-center mt-3">
@@ -43,7 +45,7 @@ export function CreateCartItem(selectedProduct, index) {
         </button>
 
         <span class="form-control text-center bg-white">
-          ${selectedProduct.amount}
+          ${EscapeHtml(selectedProduct.amount)}
         </span>
 
         <button
@@ -56,7 +58,7 @@ export function CreateCartItem(selectedProduct, index) {
       </div>
 
       <div class="fw-bold fs-5 ms-3 text-nowrap">
-        ${selectedProduct.amount * selectedProduct.product.unitPrice} Ft
+        ${EscapeHtml(selectedProduct.amount * selectedProduct.product.unitPrice)} Ft
       </div>
 
     </div>
@@ -71,7 +73,7 @@ export function CreateCartItem(selectedProduct, index) {
             </div>
 
             <div class="ms-3 text-nowrap">
-              ${selectedProduct.product.deposit * selectedProduct.amount} Ft
+              ${EscapeHtml(selectedProduct.product.deposit * selectedProduct.amount)} Ft
             </div>
 
           </div>

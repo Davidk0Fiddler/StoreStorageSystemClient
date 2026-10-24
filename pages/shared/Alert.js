@@ -1,3 +1,5 @@
+import { EscapeHtml } from "./Html.js";
+
 export function AlertIcon(type) {
   switch (type) {
     case "success":
@@ -19,6 +21,11 @@ export function AlertIcon(type) {
 
 export async function DisplayAlert(type, message) {
   const alertPlaceholder = document.getElementById("liveAlertPlaceholder");
+  if (!alertPlaceholder) return;
+
+  const alertType = ["success", "danger", "warning", "info"].includes(type)
+    ? type
+    : "info";
 
   alertPlaceholder.innerHTML = "";
 
@@ -26,15 +33,15 @@ export async function DisplayAlert(type, message) {
 
   wrapper.innerHTML = `
     <div
-      class="alert modern-alert alert-${type} fade show"
+      class="alert modern-alert alert-${alertType} fade show"
       role="alert"
     >
       <div class="modern-alert-icon">
-        <i class="${AlertIcon(type)}"></i>
+        <i class="${AlertIcon(alertType)}"></i>
       </div>
 
       <div class="modern-alert-message">
-        ${message}
+        ${EscapeHtml(message)}
       </div>
 
       <button

@@ -1,8 +1,9 @@
 <!doctype html>
-<html lang="en">
+<html lang="hu" data-required-roles="Admin,Storage">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <script src="../shared/RoleGuard.js"></script>
     <link
       rel="stylesheet"
       href="../../node_modules/bootstrap/dist/css/bootstrap.min.css"
@@ -14,12 +15,13 @@
     />
     <link rel="stylesheet" href="../backgroundShapes.css" />
     <link rel="stylesheet" href="../modernAlertStyle.css" />
+    <link rel="stylesheet" href="../shared/stockDocuments/StockDocuments.css" />
     <link rel="stylesheet" href="./Styles/brandStyles.css" />
     <link rel="stylesheet" href="./Styles/productTypeStyles.css" />
     <link rel="stylesheet" href="./Styles/productSizeStyles.css" />
     <link rel="stylesheet" href="./Styles/product.css" />
     <link rel="stylesheet" href="./Styles/addStockStyles.css" />
-    <title>Árú létrehozása</title>
+    <title>Árufelvétel — Termelői bolt</title>
   </head>
   <body>
     <div class="background-shapes">
@@ -64,7 +66,7 @@
             type="button"
             class="btn-close"
             data-bs-dismiss="offcanvas"
-            aria-label="Close"
+            aria-label="Bezárás"
           ></button>
         </div>
         <div class="offcanvas-body">
@@ -72,7 +74,7 @@
             <div
               class="btn btn-outline-secondary col-10 p-2 mb-3 fw-bold"
               data-bs-dismiss="offcanvas"
-              aria-label="Close"
+              aria-label="Bezárás"
               id="create-stock-sidebar-button"
             >
               <i class="bi bi-inboxes-fill"></i>
@@ -134,8 +136,9 @@
           style="width: 3rem; height: 3rem"
           role="status"
         >
-          <span class="visually-hidden">Loading...</span>
+          <span class="visually-hidden">Betöltés…</span>
         </div>
+        <div id="spinning-overlay-message" class="mt-3 text-center fw-semibold" role="status" aria-live="polite">Betöltés…</div>
       </div>
     </section>
 
@@ -916,6 +919,14 @@
                       Ha a termék visszaváltható, add meg a betétdíj összegét.
                     </div>
                   </div>
+
+                  <div class="border rounded-4 p-3 mt-3 bg-body-tertiary">
+                    <div class="form-check form-switch mb-0">
+                      <input class="form-check-input" type="checkbox" role="switch" id="product-create-minors-input" checked />
+                      <label class="form-check-label fw-semibold" for="product-create-minors-input">18 év alattiak is megvásárolhatják</label>
+                    </div>
+                    <div class="form-text mt-2">Alapértelmezés szerint a termék kiskorúaknak is értékesíthető.</div>
+                  </div>
                 </div>
 
                 <!-- Jobb oldal - kép -->
@@ -942,9 +953,12 @@
                   >
                     <div class="mb-3">
                       <img
-                        src="https://placehold.co/400x250"
+                        id="product-create-image-preview"
+                        data-product-image="true"
                         class="img-fluid rounded-3"
                         alt="Előnézet"
+                        loading="eager"
+                        decoding="async"
                         style="
                           width: 100%;
                           max-height: 250px;
@@ -963,7 +977,7 @@
                     <input
                       type="file"
                       class="form-control"
-                      accept="image/*"
+                      accept=".jpg,.jpeg,.png,.gif,.webp,.bmp,image/jpeg,image/png,image/gif,image/webp,image/bmp"
                       id="product-create-image-input"
                     />
 
@@ -973,6 +987,7 @@
                   </div>
                 </div>
               </div>
+
             </div>
 
             <!-- Footer -->
@@ -1097,11 +1112,13 @@
                     class="h-100 border rounded-4 p-3 bg-body-tertiary d-flex align-items-center justify-content-center"
                   >
                     <img
-                      src=""
+                      data-product-image="true"
                       alt=""
                       id="product-view-image"
                       class="img-fluid rounded-3"
                       style="width: 100%; height: 250px; object-fit: contain"
+                      loading="eager"
+                      decoding="async"
                     />
                   </div>
                 </div>
@@ -1222,6 +1239,10 @@
                     </div>
                   </div>
                 </div>
+              </div>
+              <div class="border rounded-3 p-3 mt-3">
+                <div class="small text-body-secondary mb-2">Korhatár</div>
+                <span id="product-view-minors" class="badge"></span>
               </div>
             </div>
 
@@ -1471,6 +1492,14 @@
                       Ha a termék visszaváltható, add meg a betétdíj összegét.
                     </div>
                   </div>
+
+                  <div class="border rounded-4 p-3 mt-3 bg-body-tertiary">
+                    <div class="form-check form-switch mb-0">
+                      <input class="form-check-input" type="checkbox" role="switch" id="product-update-minors-input" checked />
+                      <label class="form-check-label fw-semibold" for="product-update-minors-input">18 év alattiak is megvásárolhatják</label>
+                    </div>
+                    <div class="form-text mt-2">Kapcsold ki a mezőt, ha a termék csak nagykorúaknak adható el.</div>
+                  </div>
                 </div>
 
                 <!-- Jobb oldal - kép -->
@@ -1497,10 +1526,12 @@
                   >
                     <div class="mb-3">
                       <img
-                        src="https://placehold.co/400x250"
+                        data-product-image="true"
                         class="img-fluid rounded-3"
                         alt="Előnézet"
                         id="product-update-image"
+                        loading="eager"
+                        decoding="async"
                         style="width: 100%; height: 250px; object-fit: contain"
                       />
                     </div>
@@ -1515,7 +1546,7 @@
                     <input
                       type="file"
                       class="form-control"
-                      accept="image/*"
+                      accept=".jpg,.jpeg,.png,.gif,.webp,.bmp,image/jpeg,image/png,image/gif,image/webp,image/bmp"
                       id="product-update-image-input"
                     />
 
@@ -1615,7 +1646,7 @@
                     id="product-search-filter-select"
                     class="form-select rounded-3"
                   >
-                    <option value="nev" default>Név alapján</option>
+                    <option value="nev" selected>Név alapján</option>
                     <option value="vonalkod">Vonalkód alapján</option>
                     <option value="sku">Belső azonosító alapján</option>
                     <option value="termektipus">Terméktípus alapján</option>
@@ -1634,18 +1665,21 @@
                     Terméknév:
                   </label>
 
-                  <div class="input-group">
-                    <span
-                      class="input-group-text bg-body border-end-0 rounded-start-3"
-                    >
-                      <i class="bi bi-search text-body-secondary"></i>
-                    </span>
+                  <div id="product-search-filter-control">
+                    <div class="input-group">
+                      <span
+                        class="input-group-text bg-body border-end-0 rounded-start-3"
+                      >
+                        <i class="bi bi-search text-body-secondary"></i>
+                      </span>
 
-                    <input
-                      type="text"
-                      id="product-search-filter-input"
-                      class="form-control border-start-0 rounded-end-3"
-                    />
+                      <input
+                        type="text"
+                        id="product-search-filter-input"
+                        class="form-control border-start-0 rounded-end-3"
+                        autocomplete="off"
+                      />
+                    </div>
                   </div>
                 </div>
               </div>
@@ -1679,5 +1713,6 @@
 
     <script src="../../node_modules/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script type="module" src="AddStockPage.js"></script>
-  </body>
+    <script src="../shared/PageTitle.js"></script>
+</body>
 </html>

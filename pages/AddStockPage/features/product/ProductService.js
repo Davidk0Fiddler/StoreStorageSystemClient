@@ -1,4 +1,5 @@
 import { AddStockAPIs } from "../../api/AddStockAPIs.js";
+import { NormalizeApiList } from "../../../shared/NormalizeApiList.js";
 
 import {
   GetLoadedProducts,
@@ -7,11 +8,59 @@ import {
   GetProductSearchValue,
 } from "./ProductState.js";
 
+const PRODUCT_SEARCH_FIELDS = {
+  nev: ["productName", "name"],
+  vonalkod: ["barcode", "barCode", "barcodeNumber", "barCodeNumber", "productBarcode"],
+  sku: ["sku", "productSKU", "productSku"],
+  termektipus: ["productType", "productTypeName", "typeName", "type", "categoryName"],
+  termekmeret: ["productSize", "productSizeName", "sizeName", "productUnit", "unit"],
+  marka: ["brandName", "brand", "productBrand"],
+};
+
+const NESTED_SEARCH_VALUE_FIELDS = [
+  "name",
+  "productName",
+  "brandName",
+  "productTypeName",
+  "categoryName",
+  "type",
+  "productSizeName",
+  "unitName",
+  "typeName",
+  "sizeName",
+  "value",
+  "code",
+];
+
+function NormalizeSearchText(value) {
+  return String(value ?? "")
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .toLocaleLowerCase("hu-HU")
+    .trim();
+}
+
+function GetSearchableProductValues(product, fields) {
+  return fields.flatMap((field) => {
+    const value = product?.[field];
+
+    if (value === null || value === undefined) return [];
+
+    if (typeof value === "object") {
+      return NESTED_SEARCH_VALUE_FIELDS
+        .map((nestedField) => value[nestedField])
+        .filter((nestedValue) => nestedValue !== null && nestedValue !== undefined);
+    }
+
+    return [value];
+  });
+}
+
 /*
  * Összes termék lekérése.
  */
 export async function GetAllProducts() {
-  const response = await AddStockAPIs.RequestAllProductsForListing();
+  const response = await AddStockAPIs.RequestAllProducts();
 
   if (!response.success) {
     return {
@@ -20,11 +69,19 @@ export async function GetAllProducts() {
     };
   }
 
-  SetLoadedProducts(response.data);
+  const products = NormalizeApiList(response.data);
+  if (!products) {
+    return {
+      success: false,
+      error: "A backend nem terméklistát adott viss.",
+    };
+  }
+
+  SetLoadedProducts(products);
 
   return {
     success: true,
-    data: response.data,
+    data: products,
   };
 }
 
@@ -41,46 +98,44 @@ export function GetProducts() {
 export function GetFilteredProducts() {
   const products = GetLoadedProducts();
   const filter = GetProductSearchFilter();
-  const searchValue = GetProductSearchValue();
+  const searchValue = NormalizeSearchText(GetProductSearchValue());
+  const searchableFields = PRODUCT_SEARCH_FIELDS[filter];
 
-  if (!filter || !searchValue) {
+  if (!searchableFields || !searchValue) {
     return products;
   }
 
-  switch (filter) {
-    case "nev":
-      return products.filter((product) =>
-        product.productName?.toLowerCase().includes(searchValue),
-      );
+  return products.filter((product) =>
+    GetSearchableProductValues(product, searchableFields).some((value) =>
+      NormalizeSearchText(value).includes(searchValue),
+    ),
+  );
+}
 
-    case "vonalkod":
-      return products.filter((product) =>
-        product.barcode?.toLowerCase().includes(searchValue),
-      );
+/*
+ * Kategória jellegű szűrőkhöz választható értékek.
+ */
+export function GetProductSearchOptions(filter) {
+  const searchableFields = PRODUCT_SEARCH_FIELDS[filter];
 
-    case "sku":
-      return products.filter((product) =>
-        product.sku?.toLowerCase().includes(searchValue),
-      );
+  if (!searchableFields) return [];
 
-    case "termektipus":
-      return products.filter((product) =>
-        product.productType?.toLowerCase().includes(searchValue),
-      );
+  const uniqueValues = new Map();
 
-    case "termekmeret":
-      return products.filter((product) =>
-        product.productSize?.toLowerCase().includes(searchValue),
-      );
+  for (const product of GetLoadedProducts()) {
+    for (const value of GetSearchableProductValues(product, searchableFields)) {
+      const label = String(value ?? "").trim();
+      const key = NormalizeSearchText(label);
 
-    case "marka":
-      return products.filter((product) =>
-        product.brand?.toLowerCase().includes(searchValue),
-      );
-
-    default:
-      return products;
+      if (key && !uniqueValues.has(key)) {
+        uniqueValues.set(key, label);
+      }
+    }
   }
+
+  return [...uniqueValues.values()].sort((left, right) =>
+    left.localeCompare(right, "hu-HU", { sensitivity: "base" }),
+  );
 }
 
 /*
@@ -144,8 +199,8 @@ export async function GetProductBySKU(productSKU) {
 /*
  * Új termék létrehozása.
  */
-export async function CreateProduct(formData) {
-  const response = await AddStockAPIs.SendCreateProductRequest(formData);
+export async function CreateProduct(formData, onProgress) {
+  const response = await AddStockAPIs.SendCreateProductRequest(formData, onProgress);
 
   if (!response.success) {
     return {
@@ -163,10 +218,11 @@ export async function CreateProduct(formData) {
 /*
  * Meglévő termék módosítása.
  */
-export async function UpdateProduct(formData, productSKU) {
+export async function UpdateProduct(formData, productSKU, onProgress) {
   const response = await AddStockAPIs.SendProductUpdateRequest(
     productSKU,
     formData,
+    onProgress,
   );
 
   if (!response.success) {

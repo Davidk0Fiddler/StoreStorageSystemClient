@@ -10,6 +10,7 @@ import { RenderStockList } from "./StockList.js";
 
 import { ShowStockDetails } from "./StockDetailsModal.js";
 import { DisplayAlert as DisplayStockAlert } from "../../shared/Alert.js";
+import { IsExpiredStock } from "../../shared/ExpiredStockBadge.js";
 
 function CalculatePrice(importPrice, vatPercent, marginPercent) {
   const priceWithVat = importPrice * (1 + vatPercent / 100);
@@ -120,6 +121,7 @@ export function OpenUpdatePriceModal() {
 
   document.getElementById("update-price-product-name").textContent =
     stock.product.productName;
+  document.getElementById("update-price-expired-badge")?.classList.toggle("d-none", !IsExpiredStock(stock));
 
   document.getElementById("update-current-price").textContent =
     `${stock.currentPrice.toLocaleString("hu-HU")} Ft`;

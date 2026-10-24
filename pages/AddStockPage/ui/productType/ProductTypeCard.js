@@ -1,3 +1,5 @@
+import { EscapeHtml } from "../../../shared/Html.js";
+
 export function RenderProductTypeCard(productType) {
   const action = productType.isActive
     ? "deactivate-producttype"
@@ -27,7 +29,7 @@ export function RenderProductTypeCard(productType) {
               </div>
 
               <div class="fw-bold fs-5 mt-1">
-                ${productType.typeName}
+                ${EscapeHtml(productType.typeName)}
               </div>
             </div>
 
@@ -47,7 +49,7 @@ export function RenderProductTypeCard(productType) {
             type="button"
             class="btn btn-primary flex-fill rounded-3"
             data-action="edit-producttype"
-            data-product-type-id="${productType.id}"
+            data-product-type-id="${EscapeHtml(productType.id)}"
           >
             <i class="bi bi-pencil me-2"></i>
             Módosítás
@@ -57,7 +59,7 @@ export function RenderProductTypeCard(productType) {
             type="button"
             class="btn ${buttonClass} col-6 m-1 py-2"
             data-action="${action}"
-            data-product-type-id="${productType.id}"
+            data-product-type-id="${EscapeHtml(productType.id)}"
           >
             <i class="bi ${icon}"></i>
             ${statusText}

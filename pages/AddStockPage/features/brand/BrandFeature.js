@@ -32,6 +32,7 @@ import {
 } from "../../UI/brand/BrandModals.js";
 
 import { DisplayAlert } from "../../../shared/Alert.js";
+import { AddEventListenerOnce } from "../../../shared/AddEventListenerOnce.js";
 
 import { LoadingSpinner } from "../../../shared/LoadSpinner.js";
 
@@ -352,7 +353,7 @@ function RegisterCreateBrandEvents() {
 
   const saveButton = document.getElementById("brand-create-save-button");
 
-  saveButton?.addEventListener("click", HandleCreateBrand);
+  AddEventListenerOnce(saveButton, "click", HandleCreateBrand, "create-brand");
 }
 
 /*
@@ -364,5 +365,5 @@ function RegisterCreateBrandEvents() {
 function RegisterUpdateBrandEvents() {
   const saveButton = document.getElementById("brand-update-save-button");
 
-  saveButton?.addEventListener("click", HandleUpdateBrand);
+  AddEventListenerOnce(saveButton, "click", HandleUpdateBrand, "update-brand");
 }

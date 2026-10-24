@@ -1,3 +1,5 @@
+import { EscapeHtml } from "../../../shared/Html.js";
+
 export function RenderProductSizeCard(productSize) {
   const action = productSize.isActive
     ? "deactivate-productsize"
@@ -17,7 +19,7 @@ export function RenderProductSizeCard(productSize) {
           id="ProductSize-name-area"
           class="fw-bold"
         >
-          ${productSize.sizeName}
+          ${EscapeHtml(productSize.sizeName)}
         </span>
 
         <div class="row d-flex justify-content-evenly mt-3">
@@ -26,7 +28,7 @@ export function RenderProductSizeCard(productSize) {
             type="button"
             class="btn btn-secondary col-6 m-1"
             data-action="edit-productsize"
-            data-product-size-id="${productSize.id}"
+            data-product-size-id="${EscapeHtml(productSize.id)}"
           >
             <i class="bi bi-pencil"></i>
             Módosítás
@@ -36,7 +38,7 @@ export function RenderProductSizeCard(productSize) {
             type="button"
             class="btn ${buttonClass} col-6 m-1"
             data-action="${action}"
-            data-product-size-id="${productSize.id}"
+            data-product-size-id="${EscapeHtml(productSize.id)}"
           >
             <i class="bi ${icon}"></i>
             ${statusText}

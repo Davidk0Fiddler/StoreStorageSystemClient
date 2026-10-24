@@ -1,8 +1,9 @@
 <!doctype html>
-<html lang="hu">
+<html lang="hu" data-required-roles="Admin,Counter,Storage">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <script src="../shared/RoleGuard.js"></script>
     <link
       rel="stylesheet"
       href="../../node_modules/bootstrap/dist/css/bootstrap.min.css"
@@ -14,8 +15,9 @@
     />
     <link rel="stylesheet" href="../backgroundShapes.css" />
     <link rel="stylesheet" href="../modernAlertStyle.css" />
+    <link rel="stylesheet" href="../shared/stockDocuments/StockDocuments.css" />
 
-    <title>Áru Panel</title>
+    <title>Készlet — Termelői bolt</title>
 
     <style>
       .expiring-soon {
@@ -54,7 +56,7 @@
           style="width: 3rem; height: 3rem"
           role="status"
         >
-          <span class="visually-hidden">Loading...</span>
+          <span class="visually-hidden">Betöltés…</span>
         </div>
       </div>
     </section>
@@ -110,7 +112,7 @@
     <!-- Show Stock Detail Modals -->
     <section>
       <div class="modal fade" id="stock-details-modal" tabindex="-1">
-        <div class="modal-dialog modal-xl modal-dialog-centered">
+        <div class="modal-dialog modal-xl modal-dialog-centered modal-dialog-scrollable stock-details-dialog">
           <div class="modal-content border-0 shadow-lg rounded-4">
             <div class="modal-header bg-primary text-white">
               <h4 class="modal-title">
@@ -131,10 +133,12 @@
                     <div class="card-body text-center">
                       <img
                         id="modal-product-image"
-                        src="https://placehold.co/300"
+                        data-product-image="true"
                         alt="Termék képe"
                         class="img-fluid rounded-4 border shadow-sm mb-4"
                         style="max-height: 300px; object-fit: contain"
+                        loading="eager"
+                        decoding="async"
                       />
                       <h3 id="modal-product-name" class="fw-bold"></h3>
                       <p
@@ -290,6 +294,7 @@
                               id="modal-expiration"
                               class="fw-bold text-danger"
                             ></div>
+                            <span id="modal-expired-badge" class="badge bg-danger mt-2 d-none">Lejárt</span>
                           </div>
                         </div>
 
@@ -304,6 +309,7 @@
                   </div>
                 </div>
               </div>
+              <div id="modal-stock-documents" class="row g-3 mt-1 d-none"></div>
             </div>
           </div>
         </div>
@@ -454,6 +460,9 @@
                 id="update-price-product-name"
                 class="text-center fw-bold mb-4"
               ></h3>
+              <div class="text-center mb-3">
+                <span id="update-price-expired-badge" class="badge bg-danger d-none">Lejárt</span>
+              </div>
 
               <div class="row g-4">
                 <!-- ================= LEFT ================= -->
@@ -804,5 +813,6 @@
 
     <script type="module" src="StockPanel.js"></script>
     <script src="../../node_modules/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
-  </body>
+    <script src="../shared/PageTitle.js"></script>
+</body>
 </html>

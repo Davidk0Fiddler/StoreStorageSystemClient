@@ -1,4 +1,5 @@
 import { CounterAPIs } from "../../api/CounterAPI.js";
+import { NormalizeApiList } from "../../../shared/NormalizeApiList.js";
 
 export async function GetAllProducts() {
   const response = await CounterAPIs.RequestAllProducts();
@@ -10,9 +11,12 @@ export async function GetAllProducts() {
     };
   }
 
+  const products = NormalizeApiList(response.data);
+  if (!products) return { success: false, error: "A backend nem terméklistát adott vissza." };
+
   return {
     success: true,
-    data: response.data,
+    data: products,
   };
 }
 
@@ -26,9 +30,12 @@ export async function GetAllProductsForCashier() {
     };
   }
 
+  const products = NormalizeApiList(response.data);
+  if (!products) return { success: false, error: "A backend nem pénztári terméklistát adott vissza." };
+
   return {
     success: true,
-    data: response.data,
+    data: products,
   };
 }
 

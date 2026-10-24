@@ -1,3 +1,5 @@
+import { EscapeHtml } from "../../../shared/Html.js";
+
 function GetAfaCode(afa) {
   switch (afa) {
     case 27:
@@ -32,20 +34,20 @@ export function CreateReceiptItem(selectedProduct) {
 
       <div class="col-5">
         <div class="fw-semibold">
-          ${product.productName}
+          ${EscapeHtml(product.productName)}
         </div>
       </div>
 
       <div class="col-2 text-center">
-        ${amount}
+        ${EscapeHtml(amount)}
       </div>
 
       <div class="col-2 text-end">
-        ${product.unitPrice}Ft/${product.productSize}
+        ${EscapeHtml(product.unitPrice)}Ft/${EscapeHtml(product.productSize)}
       </div>
 
       <div class="col-2 text-end fw-semibold">
-        ${productTotal} Ft
+        ${EscapeHtml(productTotal)} Ft
       </div>
 
       <div class="col-1 text-end">
@@ -63,15 +65,15 @@ export function CreateReceiptItem(selectedProduct) {
             </div>
 
             <div class="col-2 text-center text-secondary">
-              ${amount}
+              ${EscapeHtml(amount)}
             </div>
 
             <div class="col-2 text-end text-secondary">
-              ${product.deposit}Ft/db
+              ${EscapeHtml(product.deposit)}Ft/db
             </div>
 
             <div class="col-2 text-end fw-semibold text-secondary">
-              ${depositTotal} Ft
+              ${EscapeHtml(depositTotal)} Ft
             </div>
 
             <div class="col-1 text-end">

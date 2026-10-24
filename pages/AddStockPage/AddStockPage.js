@@ -4,50 +4,39 @@ import { DisplayProductTypePanel } from "./features/productType/ProductTypeFeatu
 import { DisplayProductSizePanel } from "./features/productSize/ProductSizeFeature.js";
 import { DisplayProductPanel } from "./features/product/ProductFeature.js";
 import { DisplayStockStart } from "./features/stock/StockFeature.js";
+import { InitializeStockDocumentsFeature } from "../shared/stockDocuments/StockDocumentsFeature.js";
 
-const createStockPanel = await ReturnCreateStockPanel();
+async function InitializeAddStockPage() {
+  await ReturnCreateStockPanel();
 
-document.getElementById("back-to-menu-button").addEventListener("click", () => {
-  window.location.href = "../LandingPage/LandingPage.html";
-});
-
-document
-  .getElementById("back-to-menu-side-bar-button")
-  .addEventListener("click", () => {
+  document.getElementById("back-to-menu-button").addEventListener("click", () => {
     window.location.href = "../LandingPage/LandingPage.html";
   });
+  document
+    .getElementById("back-to-menu-side-bar-button")
+    .addEventListener("click", () => {
+      window.location.href = "../LandingPage/LandingPage.html";
+    });
 
-const contentContainer = document.getElementById("content-container");
-const panelLabel = document.getElementById("panel-label");
+  InitializeStockDocumentsFeature(document);
 
-document
-  .getElementById("open-brand-panel")
-  .addEventListener("click", async () => {
+  document.getElementById("open-brand-panel").addEventListener("click", async () => {
     await DisplayBrandPanel();
   });
-
-document
-  .getElementById("open-producttype-panel-button")
-  .addEventListener("click", async () => {
+  document.getElementById("open-producttype-panel-button").addEventListener("click", async () => {
     await DisplayProductTypePanel();
   });
-
-document
-  .getElementById("open-ProductSize-panel-button")
-  .addEventListener("click", async () => {
+  document.getElementById("open-ProductSize-panel-button").addEventListener("click", async () => {
     await DisplayProductSizePanel();
   });
-
-document
-  .getElementById("open-product-panel-button")
-  .addEventListener("click", async () => {
+  document.getElementById("open-product-panel-button").addEventListener("click", async () => {
     await DisplayProductPanel();
   });
-
-document
-  .getElementById("create-stock-sidebar-button")
-  .addEventListener("click", async () => {
+  document.getElementById("create-stock-sidebar-button").addEventListener("click", async () => {
     await DisplayStockStart();
   });
 
-await DisplayStockStart();
+  await DisplayStockStart();
+}
+
+if (window.__pageAccessAllowed === true) await InitializeAddStockPage();

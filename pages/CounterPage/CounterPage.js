@@ -28,5 +28,7 @@ function InitializePageEvents() {
   });
 }
 
-InitializePageEvents();
-InitializeCashier();
+if (window.__pageAccessAllowed === true) {
+  InitializePageEvents();
+  InitializeCashier();
+}

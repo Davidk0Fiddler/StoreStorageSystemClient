@@ -1,3 +1,5 @@
+import { ResolveProductThumbnailUrl } from "../../../shared/ProductImage.js";
+import { EscapeHtml } from "../../../shared/Html.js";
 import {
   GetIsCashRegisterMode,
   SetIsCashRegisterMode,
@@ -13,6 +15,7 @@ import { InitializeCheckout } from "../checkout/CheckoutFeature.js";
 
 import {
   GetCashRegisterModal,
+  GetCashierBarcodeInput,
   GetCashierProductList,
   GetCashierProductSearch,
   GetQuantityModal,
@@ -23,15 +26,43 @@ import {
   ShowCashRegisterModal,
   ShowQuantityModal,
   HideQuantityModal,
+  AskBuyerAge,
 } from "../../ui/cashier/CashierPanel.js";
 
 import { DisplayAlert } from "../../../shared/Alert.js";
+import { NormalizeBarcode } from "../../../shared/NormalizeBarcode.js";
+import { RenderProductAgeRestrictionSticker } from "../../../shared/ProductAgeRestrictionSticker.js";
 
 let cashierProducts = [];
 let quantityModal = null;
+let barcodeBuffer = "";
 
 let isInitialized = false;
 let isBarcodeListenerInitialized = false;
+let buyerAgeStatus = null;
+
+function productCanBePurchasedByMinors(product) {
+  const value = product?.canBePurchasedByMinors;
+  return value !== false && value !== 0 && String(value).toLowerCase() !== "false";
+}
+
+async function EnsureBuyerCanPurchase(product) {
+  if (productCanBePurchasedByMinors(product) || buyerAgeStatus === "adult") return true;
+  if (buyerAgeStatus === "minor") {
+    DisplayAlert("danger", "A kiskorú vásárló ezt a terméket nem vásárolhatja meg.");
+    return false;
+  }
+  const decision = await AskBuyerAge();
+  if (decision === "adult") {
+    buyerAgeStatus = "adult";
+    return true;
+  }
+  if (decision === "minor") {
+    buyerAgeStatus = "minor";
+    DisplayAlert("danger", "A kiskorú vásárló ezt a terméket nem vásárolhatja meg.");
+  }
+  return false;
+}
 
 function GetQuantityStep(product) {
   if (product?.productSize === "db") {
@@ -56,24 +87,27 @@ function RenderCashierProducts(products) {
     cardWrapper.classList.add("col");
 
     const card = document.createElement("div");
-
-    card.classList.add("card", "h-100", "border-0", "rounded");
+    card.classList.add("card", "h-100", "border-0", "rounded", "position-relative");
 
     card.style.cursor = "pointer";
 
     card.innerHTML = `
+      ${RenderProductAgeRestrictionSticker(product)}
       <img
-        src="${product.imageURL ?? ""}"
-        alt="${product.productName ?? "Termék"}"
+        data-product-image="true"
+        src="${EscapeHtml(ResolveProductThumbnailUrl(product.thumbnailURL || product.thumbnailUrl || product.productThumbnailURL || product.productThumbnailUrl, product.imageURL || product.productImageURL))}"
+        alt="${EscapeHtml(product.productName ?? "Termék")}"
         class="card-img-top object-fit-contain p-2"
         style="height: 140px;"
+        loading="lazy"
+        decoding="async"
       >
 
       <div
         class="card-body d-flex align-items-center justify-content-center p-2"
       >
         <div class="fw-semibold text-center">
-          ${product.productName ?? "Ismeretlen termék"}
+          ${EscapeHtml(product.productName ?? "Ismeretlen termék")}
         </div>
       </div>
     `;
@@ -93,7 +127,9 @@ function RenderCashierProducts(products) {
 }
 
 async function AddCashierProduct(product, quantity) {
+  if (!(await EnsureBuyerCanPurchase(product))) return false;
   await AddToCart(product, quantity);
+  return true;
 }
 
 async function OpenQuantitySelector(product) {
@@ -156,6 +192,8 @@ async function SelectCashierProduct(product) {
     return;
   }
 
+  if (!(await EnsureBuyerCanPurchase(product))) return;
+
   if (product.productSize === "db") {
     await AddCashierProduct(product, 1);
 
@@ -182,6 +220,18 @@ function InitializeProductSearch() {
     RenderCashierProducts(filteredProducts);
   });
 
+  searchInput.addEventListener("blur", () => {
+    window.setTimeout(() => {
+      const quantityModalIsOpen = GetQuantityModal()?.classList.contains("show");
+      const ageModalIsOpen = document
+        .getElementById("buyer-age-confirmation-modal")
+        ?.classList.contains("show");
+      if (GetIsCashRegisterMode() && !quantityModalIsOpen && !ageModalIsOpen) {
+        GetCashierBarcodeInput()?.focus({ preventScroll: true });
+      }
+    }, 0);
+  });
+
   const clearButton = document.getElementById("clear-product-search");
 
   clearButton?.addEventListener("click", () => {
@@ -200,17 +250,26 @@ function InitializeBarcodeScanner() {
 
   isBarcodeListenerInitialized = true;
 
-  let barcode = "";
-
   document.addEventListener("keydown", async (event) => {
     if (!GetIsCashRegisterMode()) {
       return;
     }
 
-    if (event.key === "Enter") {
-      const scannedBarcode = barcode.replace("ö", "0").replace("Ö", "0").trim();
+    const target = event.target;
+    const isEditableTarget =
+      target instanceof HTMLElement &&
+      (target.isContentEditable || target.matches("input, textarea, select"));
+    if (isEditableTarget && target !== GetCashierBarcodeInput()) {
+      barcodeBuffer = "";
+      return;
+    }
 
-      barcode = "";
+    if (event.key === "Enter") {
+      const scannedBarcode = NormalizeBarcode(barcodeBuffer);
+
+      barcodeBuffer = "";
+      const barcodeInput = GetCashierBarcodeInput();
+      if (barcodeInput) barcodeInput.value = "";
 
       if (!scannedBarcode) {
         return;
@@ -248,7 +307,7 @@ function InitializeBarcodeScanner() {
       return;
     }
 
-    barcode += event.key;
+    barcodeBuffer += event.key;
   });
 }
 
@@ -277,6 +336,11 @@ function InitializeCashRegisterCloseEvent() {
 
   modalElement.addEventListener("hidden.bs.modal", () => {
     SetIsCashRegisterMode(false);
+    buyerAgeStatus = null;
+    barcodeBuffer = "";
+  });
+  modalElement.addEventListener("shown.bs.modal", () => {
+    GetCashierBarcodeInput()?.focus({ preventScroll: true });
   });
 }
 
@@ -296,6 +360,8 @@ export function InitializeCashier() {
 
 export async function OpenCashRegister() {
   InitializeCashier();
+  buyerAgeStatus = null;
+  barcodeBuffer = "";
 
   const loaded = await LoadCashierProducts();
 
@@ -310,6 +376,7 @@ export async function OpenCashRegister() {
 
 export function CloseCashRegister() {
   SetIsCashRegisterMode(false);
+  buyerAgeStatus = null;
 }
 
 export function OpenProductSearch() {

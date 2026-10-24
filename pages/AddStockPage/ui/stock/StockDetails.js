@@ -5,10 +5,12 @@ export function RenderStockDetails() {
       <div class="col-md-3 text-center">
         <img
           id="addstock-selected-product-image"
-          src=""
+          data-product-image="true"
           class="img-fluid rounded"
           style="max-height: 150px;"
           alt="Kiválasztott termék"
+          loading="eager"
+          decoding="async"
         />
       </div>
 

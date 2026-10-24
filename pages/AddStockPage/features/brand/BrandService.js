@@ -1,4 +1,5 @@
 import { AddStockAPIs } from "../../api/AddStockAPIs.js";
+import { NormalizeApiList } from "../../../shared/NormalizeApiList.js";
 
 import { GetBrandFilter, SetBrandFilter } from "./BrandState.js";
 
@@ -15,9 +16,12 @@ export async function GetAllBrands() {
     };
   }
 
+  const brands = NormalizeApiList(response.data);
+  if (!brands) return { success: false, error: "A backend nem márkalistát adott vissza." };
+
   return {
     success: true,
-    data: response.data,
+    data: brands,
   };
 }
 

@@ -40,20 +40,22 @@ export const AddStockAPIs = {
   /*
     PRODUCTS
   */
+  RequestAllProducts: () => API_CALL("Products", "GET"),
   RequestAllProductsForListing: () => API_CALL("Products/listing", "GET"),
   RequestProductBySKU: (sku) => API_CALL("Products/sku", "GET", null, sku),
   SendProductActivationRequest: (productSKU) =>
     API_CALL("Products/activate", "GET", null, productSKU),
   SendProductDeactivationRequest: (productSKU) =>
     API_CALL("Products/deactivate", "GET", null, productSKU),
-  SendProductUpdateRequest: (productSKU, updateData) =>
-    API_CALL("Products", "PUT", updateData, productSKU, true),
-  SendCreateProductRequest: (requestBody) =>
-    API_CALL("Products", "POST", requestBody, null, true),
+  SendProductUpdateRequest: (productSKU, updateData, onProgress) =>
+    API_CALL("Products", "PUT", updateData, encodeURIComponent(productSKU), true, onProgress),
+  SendCreateProductRequest: (requestBody, onProgress) =>
+    API_CALL("Products", "POST", requestBody, null, true, onProgress),
   RequestProductByBarcode: (barcode) => API_CALL(`Products/${barcode}`, "GET"),
   /*
     STOCKS
   */
   SendAddStockRequest: (requestBody) =>
     API_CALL("AddStock", "POST", requestBody),
+  RequestAllStocksListing: () => API_CALL("Stocks/listing", "GET"),
 };

@@ -1,4 +1,4 @@
-export function RenderVATSummary({ afa27, afa18, afa5, afa0 }) {
+export function RenderVATSummary({ afa27, afa18, afa5, afa0, productTypesByVAT = {} }) {
   const afa27Area = document.getElementById("afa-27-area");
 
   const afa18Area = document.getElementById("afa-18-area");
@@ -21,5 +21,13 @@ export function RenderVATSummary({ afa27, afa18, afa5, afa0 }) {
 
   if (afa0Area) {
     afa0Area.textContent = `${afa0}Ft`;
+  }
+
+  for (const rate of [27, 18, 5, 0]) {
+    const typesArea = document.getElementById(`afa-${rate}-types`);
+    if (typesArea) {
+      const types = productTypesByVAT[rate] ?? productTypesByVAT[String(rate)] ?? [];
+      typesArea.textContent = types.length ? `(${types.join(", ")})` : "";
+    }
   }
 }

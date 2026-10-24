@@ -18,6 +18,7 @@ import {
 } from "../../ui/productSearch/ProductSearchPanel.js";
 
 import { DisplayAlert } from "../../../shared/Alert.js";
+import { NormalizeBarcode } from "../../../shared/NormalizeBarcode.js";
 import {
   GetProducts,
   SetProducts,
@@ -58,7 +59,7 @@ function HandleBarcodeInput() {
     return;
   }
 
-  const barcode = barcodeInput.value.replace("ö", "0").replace("Ö", "0").trim();
+  const barcode = NormalizeBarcode(barcodeInput.value);
 
   barcodeInput.value = barcode;
 

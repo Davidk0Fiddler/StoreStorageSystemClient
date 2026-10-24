@@ -272,7 +272,7 @@ async function HandleCreateUser() {
 
   spinningOverlay?.classList.add("d-none");
 
-  if (response === true) {
+  if (response.success) {
     DisplayAlert("success", "Sikeres létrehozás!");
 
     const modalElement = document.getElementById("user-creation-modal");
@@ -297,7 +297,7 @@ async function HandleCreateUser() {
     return;
   }
 
-  DisplayAlert("danger", response);
+  DisplayAlert("danger", response.message);
 }
 
 /*
@@ -322,7 +322,7 @@ async function HandleUpdateUser() {
 
   const response = await UpdateUser(requestBody);
 
-  if (response === true) {
+  if (response.success) {
     DisplayAlert("success", "Sikeres módosítás!");
 
     const modalElement = GetUserUpdateModal();
@@ -340,7 +340,7 @@ async function HandleUpdateUser() {
     return;
   }
 
-  DisplayAlert("danger", response);
+  DisplayAlert("danger", response.message);
 }
 
 /*

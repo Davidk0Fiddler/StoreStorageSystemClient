@@ -2,6 +2,35 @@ export function GetCashRegisterModal() {
   return document.getElementById("cash-register-modal");
 }
 
+export function GetCashierBarcodeInput() {
+  return document.getElementById("cashier-barcode-input");
+}
+
+export function AskBuyerAge() {
+  const element = document.getElementById("buyer-age-confirmation-modal");
+  if (!element) return Promise.resolve(null);
+  const modal = bootstrap.Modal.getOrCreateInstance(element, {
+    backdrop: "static",
+    keyboard: false,
+  });
+  const minorButton = element.querySelector("[data-buyer-is-minor]");
+  const adultButton = element.querySelector("[data-buyer-is-adult]");
+  return new Promise((resolve) => {
+    let decision = null;
+    const finish = () => resolve(decision);
+    minorButton.onclick = () => {
+      decision = "minor";
+      modal.hide();
+    };
+    adultButton.onclick = () => {
+      decision = "adult";
+      modal.hide();
+    };
+    element.addEventListener("hidden.bs.modal", finish, { once: true });
+    modal.show();
+  });
+}
+
 export function GetCashierProductList() {
   return document.getElementById("cashier-product-list");
 }
@@ -61,7 +90,7 @@ export function ShowCashRegisterModal() {
     return null;
   }
 
-  const modal = new bootstrap.Modal(modalElement);
+  const modal = bootstrap.Modal.getOrCreateInstance(modalElement);
 
   modal.show();
 

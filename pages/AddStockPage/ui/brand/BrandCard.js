@@ -1,3 +1,5 @@
+import { EscapeHtml } from "../../../shared/Html.js";
+
 export function RenderBrandCard(brand) {
   const action = brand.isActive ? "deactivate-brand" : "activate-brand";
 
@@ -25,7 +27,7 @@ export function RenderBrandCard(brand) {
             <span
               class="brand-card-name"
             >
-              ${brand.brandName}
+              ${EscapeHtml(brand.brandName)}
             </span>
           </div>
 
@@ -37,7 +39,7 @@ export function RenderBrandCard(brand) {
             type="button"
             class="btn brand-card-edit col-6 m-1"
             data-action="edit-brand"
-            data-brand-id="${brand.id}"
+            data-brand-id="${EscapeHtml(brand.id)}"
           >
             <i class="bi bi-pencil me-1"></i>
             Módosítás
@@ -47,7 +49,7 @@ export function RenderBrandCard(brand) {
             type="button"
             class="btn ${buttonClass} col-6 m-1"
             data-action="${action}"
-            data-brand-id="${brand.id}"
+            data-brand-id="${EscapeHtml(brand.id)}"
           >
             <i
               class="bi ${icon}"

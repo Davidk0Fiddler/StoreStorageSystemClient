@@ -1,3 +1,5 @@
+import { ResolveProductThumbnailUrl } from "../../../shared/ProductImage.js";
+import { EscapeHtml } from "../../../shared/Html.js";
 function RenderProductActivationButton(isActive, productSKU) {
   const action = isActive ? "deactivate-product" : "activate-product";
 
@@ -12,7 +14,7 @@ function RenderProductActivationButton(isActive, productSKU) {
       type="button"
       class="btn btn-sm ${buttonClass} rounded-3 px-3 py-2"
       data-action="${action}"
-      data-product-sku="${productSKU}"
+      data-product-sku="${EscapeHtml(productSKU)}"
     >
       <i class="bi ${icon} me-1"></i>
       ${statusText}
@@ -32,23 +34,26 @@ export function RenderProductRow(product) {
           style="width: 56px; height: 56px;"
         >
           <img
-            src="${product.productImageURL}"
-            alt="${product.productName}"
+            data-product-image="true"
+            src="${EscapeHtml(ResolveProductThumbnailUrl(product.thumbnailURL || product.thumbnailUrl || product.productThumbnailURL || product.productThumbnailUrl, product.productImageURL || product.imageURL))}"
+            alt="${EscapeHtml(product.productName)}"
             style="width: 48px; height: 48px; object-fit: contain;"
             class="rounded-2"
+            loading="lazy"
+            decoding="async"
           />
         </div>
       </td>
 
       <td class="align-middle">
         <span class="fw-semibold">
-          ${product.productName}
+          ${EscapeHtml(product.productName)}
         </span>
       </td>
 
       <td class="align-middle">
         <span class="font-monospace text-body-secondary">
-          ${product.sku}
+          ${EscapeHtml(product.sku)}
         </span>
       </td>
 
@@ -56,7 +61,7 @@ export function RenderProductRow(product) {
         <span
           class="badge rounded-pill bg-body-tertiary text-body-secondary border px-3 py-2"
         >
-          ${product.brandName}
+          ${EscapeHtml(product.brandName ?? product.brand ?? "-")}
         </span>
       </td>
 
@@ -67,7 +72,7 @@ export function RenderProductRow(product) {
             type="button"
             class="btn btn-sm btn-light border rounded-3 px-3 py-2"
             data-action="view-product"
-            data-product-sku="${product.sku}"
+            data-product-sku="${EscapeHtml(product.sku)}"
           >
             <i class="bi bi-info-circle me-1"></i>
             Részletek
@@ -77,7 +82,7 @@ export function RenderProductRow(product) {
             type="button"
             class="btn btn-sm btn-primary rounded-3 px-3 py-2"
             data-action="edit-product"
-            data-product-sku="${product.sku}"
+            data-product-sku="${EscapeHtml(product.sku)}"
           >
             <i class="bi bi-pencil-square me-1"></i>
             Módosítás

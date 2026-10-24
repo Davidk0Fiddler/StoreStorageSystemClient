@@ -30,6 +30,7 @@ import {
 } from "../../ui/productSize/ProductSizeModals.js";
 
 import { DisplayAlert } from "../../../shared/Alert.js";
+import { AddEventListenerOnce } from "../../../shared/AddEventListenerOnce.js";
 import { LoadingSpinner } from "../../../shared/LoadSpinner.js";
 
 let productSizes = [];
@@ -320,7 +321,12 @@ function RegisterProductSizeCreateEvents() {
 
   const saveButton = document.getElementById("ProductSize-create-save-button");
 
-  saveButton?.addEventListener("click", HandleCreateProductSize);
+  AddEventListenerOnce(
+    saveButton,
+    "click",
+    HandleCreateProductSize,
+    "create-product-size",
+  );
 }
 
 /*
@@ -329,5 +335,10 @@ function RegisterProductSizeCreateEvents() {
 function RegisterProductSizeUpdateEvents() {
   const saveButton = document.getElementById("ProductSize-update-save-button");
 
-  saveButton?.addEventListener("click", HandleUpdateProductSize);
+  AddEventListenerOnce(
+    saveButton,
+    "click",
+    HandleUpdateProductSize,
+    "update-product-size",
+  );
 }

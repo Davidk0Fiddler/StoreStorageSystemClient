@@ -1,9 +1,10 @@
 <!doctype html>
-<html lang="en">
+<html lang="hu" data-required-roles="Admin,Counter">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Kassza panel</title>
+    <script src="../shared/RoleGuard.js"></script>
+    <title>Kassza — Termelői bolt</title>
     <link
       rel="stylesheet"
       href="../../node_modules/bootstrap/dist/css/bootstrap.min.css"
@@ -164,9 +165,12 @@
                       >
                         <img
                           id="selected-product-image"
-                          src="https://placehold.co/300x220"
+                          data-product-image="true"
                           class="img-fluid rounded mb-4"
                           style="max-height: 220px; object-fit: contain"
+                          alt="Kiválasztott termék"
+                          loading="eager"
+                          decoding="async"
                         />
 
                         <h4 id="selected-product-name" class="text-center">
@@ -212,7 +216,7 @@
           style="width: 3rem; height: 3rem"
           role="status"
         >
-          <span class="visually-hidden">Loading...</span>
+          <span class="visually-hidden">Betöltés…</span>
         </div>
       </div>
     </section>
@@ -243,9 +247,11 @@
                   <div class="text-center">
                     <img
                       id="details-product-image"
-                      src=""
+                      data-product-image="true"
                       class="img-fluid details-image shadow-sm"
                       alt="Termék képe"
+                      loading="eager"
+                      decoding="async"
                     />
 
                     <h2 class="mt-3 fw-bold" id="details-product-name"></h2>
@@ -257,6 +263,11 @@
                       >
                         Betétdíjas
                       </span>
+                      <span
+                        id="details-product-age-restriction"
+                        class="badge bg-danger fs-6 px-3 py-2 d-none"
+                        >18 éven felül</span
+                      >
                     </div>
                   </div>
                 </div>
@@ -338,6 +349,10 @@
           id="cashier-barcode-input"
           class="position-absolute opacity-0"
           style="width: 1px; height: 1px"
+          aria-label="Vonalkód-leolvasás"
+          autocomplete="off"
+          inputmode="none"
+          tabindex="-1"
         />
 
         <div class="modal-dialog modal-fullscreen">
@@ -596,28 +611,49 @@
                       <div class="list-group">
                         <div class="list-group-item">
                           <div class="d-flex justify-content-between">
-                            <span> ÁFA 27% </span>
+                            <span>
+                              C00 - ÁFA 27%<small
+                                class="text-body-secondary"
+                                id="afa-27-types"
+                              ></small
+                            ></span>
                             <span class="fw-semibold" id="afa-27-area"></span>
                           </div>
                         </div>
 
                         <div class="list-group-item">
                           <div class="d-flex justify-content-between">
-                            <span> ÁFA 18% </span>
+                            <span>
+                              B00 - ÁFA 18%<small
+                                class="text-body-secondary"
+                                id="afa-18-types"
+                              ></small
+                            ></span>
                             <span class="fw-semibold" id="afa-18-area"></span>
                           </div>
                         </div>
 
                         <div class="list-group-item">
                           <div class="d-flex justify-content-between">
-                            <span> ÁFA 5% </span>
+                            <span>
+                              A00 - ÁFA 5%
+                              <small
+                                class="text-body-secondary"
+                                id="afa-5-types"
+                              ></small
+                            ></span>
                             <span class="fw-semibold" id="afa-5-area"></span>
                           </div>
                         </div>
 
                         <div class="list-group-item">
                           <div class="d-flex justify-content-between">
-                            <span> ÁFA 0% </span>
+                            <span>
+                              E00- ÁFA 0%<small
+                                class="text-body-secondary"
+                                id="afa-0-types"
+                              ></small
+                            ></span>
                             <span class="fw-semibold" id="afa-0-area"></span>
                           </div>
                         </div>
@@ -663,7 +699,53 @@
       </div>
     </section>
 
+    <section>
+      <div
+        class="modal fade"
+        id="buyer-age-confirmation-modal"
+        tabindex="-1"
+        aria-hidden="true"
+      >
+        <div class="modal-dialog modal-dialog-centered">
+          <div class="modal-content border-0 rounded-4 shadow-lg">
+            <div class="modal-body p-4 p-md-5 text-center">
+              <div
+                class="rounded-circle bg-warning-subtle text-warning-emphasis d-inline-flex align-items-center justify-content-center mb-3"
+                style="width: 72px; height: 72px"
+              >
+                <i class="bi bi-person-vcard fs-1" aria-hidden="true"></i>
+              </div>
+              <h2 class="h4 fw-bold">Korhatáros termék</h2>
+              <p class="text-body-secondary mb-4">A vásárló 18 éven aluli?</p>
+              <div class="d-grid gap-3">
+                <button
+                  type="button"
+                  class="btn btn-danger btn-lg py-3"
+                  data-buyer-is-minor
+                >
+                  <i
+                    class="bi bi-person-fill-exclamation me-2"
+                    aria-hidden="true"
+                  ></i
+                  >Igen, kiskorú
+                </button>
+                <button
+                  type="button"
+                  class="btn btn-success btn-lg py-3"
+                  data-buyer-is-adult
+                >
+                  <i class="bi bi-person-check-fill me-2" aria-hidden="true"></i
+                  >Nem, nagykorú
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
     <script type="module" src="./CounterPage.js"></script>
     <script src="../../node_modules/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="../shared/PageTitle.js"></script>
   </body>
 </html>

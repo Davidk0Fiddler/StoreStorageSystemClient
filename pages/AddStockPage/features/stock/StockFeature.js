@@ -1,3 +1,4 @@
+import { SetProductImageSource } from "../../../shared/ProductImage.js";
 import { RenderStockStart } from "../../ui/stock/StockStart.js";
 import { RenderStockBarcode } from "../../ui/stock/StockBarcode.js";
 import { RenderStockProductList } from "../../ui/stock/StockProductList.js";
@@ -18,6 +19,7 @@ import {
   GetProductByBarcode,
   GetProductBySKU,
   AddStock,
+  GetStockListing,
 } from "./StockService.js";
 
 import {
@@ -32,6 +34,10 @@ import {
 } from "./StockState.js";
 
 import { DisplayAlert } from "../../../shared/Alert.js";
+import { NormalizeBarcode } from "../../../shared/NormalizeBarcode.js";
+import { RenderStockDocumentsSection } from "../../../shared/stockDocuments/StockDocumentsUI.js";
+import { LoadStockDocumentsSection } from "../../../shared/stockDocuments/StockDocumentsFeature.js";
+import { RenderExpiredStockBadge } from "../../../shared/ExpiredStockBadge.js";
 
 const panelLabel = document.getElementById("panel-label");
 
@@ -77,6 +83,7 @@ function DisplayStockByBarcode() {
   contentContainer.innerHTML = RenderStockBarcode();
 
   SetIsAddStockByBarcodeOpen(true);
+  scannerBarcode = "";
 
   RegisterStockBarcodeEvents();
   RegisterBarcodeScanner();
@@ -109,9 +116,15 @@ function RegisterStockBarcodeEvents() {
  */
 
 let scannerBarcode = "";
+let isBarcodeScannerRegistered = false;
 
 function RegisterBarcodeScanner() {
+  if (isBarcodeScannerRegistered) {
+    return;
+  }
+
   document.addEventListener("keydown", HandleBarcodeScannerInput);
+  isBarcodeScannerRegistered = true;
 }
 
 function HandleBarcodeScannerInput(event) {
@@ -120,7 +133,7 @@ function HandleBarcodeScannerInput(event) {
   }
 
   if (event.key === "Enter") {
-    const barcode = scannerBarcode.replace("ö", "0").replace("Ö", "0");
+    const barcode = NormalizeBarcode(scannerBarcode);
 
     scannerBarcode = "";
 
@@ -131,16 +144,11 @@ function HandleBarcodeScannerInput(event) {
     return;
   }
 
-  if (
-    event.key === "Control" ||
-    event.key === "Shift" ||
-    event.key === "Alt" ||
-    event.key === "Meta"
-  ) {
+  if (event.ctrlKey || event.shiftKey || event.altKey || event.metaKey) {
     return;
   }
 
-  if (event.ctrlKey || event.shiftKey || event.altKey || event.metaKey) {
+  if (event.key.length !== 1) {
     return;
   }
 
@@ -156,7 +164,7 @@ function HandleBarcodeScannerInput(event) {
 async function CheckProductByBarcode(barcode = null) {
   const barcodeInput = document.getElementById("addstock-barcode-input");
 
-  const barcodeValue = barcode ?? barcodeInput?.value.trim();
+  const barcodeValue = NormalizeBarcode(barcode ?? barcodeInput?.value);
 
   if (!barcodeValue) {
     DisplayAlert("danger", "Kérlek, adj meg egy vonalkódot!");
@@ -208,11 +216,9 @@ async function DisplayStockProducts() {
 
   const products = response.data;
 
-  container.innerHTML = "";
-
-  products.forEach((product) => {
-    container.innerHTML += RenderStockProductCard(product);
-  });
+  container.innerHTML = products
+    .map((product) => RenderStockProductCard(product))
+    .join("");
 
   RegisterProductSelection(products);
   RegisterProductListEvents();
@@ -257,7 +263,7 @@ function SelectProduct(product, card) {
   const name = document.getElementById("selected-product-name");
 
   if (image) {
-    image.src = product.productImageURL ?? "";
+    SetProductImageSource(image, product.productImageURL || product.imageURL, { loading: "eager" });
   }
 
   if (name) {
@@ -348,12 +354,14 @@ async function LoadStockProductDetails(product) {
   const size = document.getElementById("addstock-selected-product-size");
 
   if (image) {
-    image.src =
-      selectedProduct.productImageURL ??
-      selectedProduct.imageURL ??
-      product.productImageURL ??
-      product.imageURL ??
-      "";
+    SetProductImageSource(
+      image,
+      selectedProduct.productImageURL ||
+        selectedProduct.imageURL ||
+        product.productImageURL ||
+        product.imageURL,
+      { loading: "eager" },
+    );
   }
 
   if (name) {
@@ -625,8 +633,156 @@ async function HandleAddStock() {
 
   DisplayAlert("success", "Sikeres áru hozzáadása!");
 
+  if (sessionStorage.getItem("roleName") === "Admin") {
+    await ShowStockDocumentsAfterReceipt(response.data, requestBody);
+    return;
+  }
+
   ResetStockForm();
   DisplayStockStart();
+}
+
+function extractCreatedStockId(value, depth = 0) {
+  if (depth > 3 || value == null) return null;
+  if (typeof value === "number" && Number.isInteger(value) && value > 0) return value;
+  if (typeof value === "string" && /^\d+$/.test(value)) return value;
+  if (typeof value !== "object") return null;
+
+  const direct = value.stockId ?? value.stockID ?? value.stock?.stockId ?? value.stock?.id;
+  if (direct != null && String(direct).trim() !== "") return direct;
+  if (value.id != null && (value.productSKU || value.productSku || value.product)) return value.id;
+  return extractCreatedStockId(value.data ?? value.result ?? value.stock, depth + 1);
+}
+
+function normalizeComparable(value) {
+  return String(value ?? "").trim().toLocaleLowerCase("hu-HU");
+}
+
+function escapeHtml(value) {
+  return String(value ?? "").replace(/[&<>"']/g, (char) => ({
+    "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;",
+  })[char]);
+}
+
+function getStockSku(stock) {
+  return stock.productSKU ?? stock.productSku ?? stock.sku ?? stock.product?.sku;
+}
+
+function findCreatedStockCandidates(stocks, requestBody) {
+  return stocks.filter((stock) => {
+    const invoice = stock.invoiceId ?? stock.invoiceNumber;
+    const transit = stock.transitId ?? stock.deliveryNoteId ?? stock.shippingDocumentId;
+    const received = stock.recievedAt ?? stock.receivedAt ?? stock.receivedAtUtc;
+    const expiration = stock.expirationDate ?? stock.expiryDate;
+    return (
+      normalizeComparable(getStockSku(stock)) === normalizeComparable(requestBody.productSKU) &&
+      normalizeComparable(invoice) === normalizeComparable(requestBody.invoiceId) &&
+      normalizeComparable(transit) === normalizeComparable(requestBody.transitId) &&
+      String(received ?? "").slice(0, 10) === requestBody.recievedAt &&
+      String(expiration ?? "").slice(0, 10) === requestBody.expirationDate
+    );
+  }).filter((stock) => stock.stockId ?? stock.stockID ?? stock.id);
+}
+
+function renderStockDocumentFollowUp(stockId) {
+  panelLabel.textContent = "Áru hozzáadása - Bizonylatok";
+  contentContainer.innerHTML = `
+    <div class="container-fluid py-3">
+      <div class="card shadow-sm mb-4">
+        <div class="card-body">
+          <div class="d-flex align-items-start gap-3">
+            <span class="stock-document-icon flex-shrink-0"><i class="bi bi-check2-circle" aria-hidden="true"></i></span>
+            <div>
+              <h2 class="h4 fw-bold mb-1">Az árutétel rögzítve</h2>
+              <p class="text-body-secondary mb-0">Most feltöltheted a számlát és a szállítólevelet. A fájlnevek alapján tudod majd megkülönböztetni a dokumentumokat.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="row g-3">${RenderStockDocumentsSection(stockId)}</div>
+      <div class="d-flex justify-content-end gap-2 py-3">
+        <button type="button" class="btn btn-primary btn-lg px-4" data-stock-documents-finish>
+          <i class="bi bi-check-lg me-2" aria-hidden="true"></i>Kész, új áru felvétele
+        </button>
+      </div>
+    </div>
+  `;
+
+  const section = contentContainer.querySelector("[data-stock-document-section]");
+  void LoadStockDocumentsSection(section);
+  contentContainer.querySelector("[data-stock-documents-finish]")?.addEventListener("click", () => {
+    ResetStockForm();
+    DisplayStockStart();
+  });
+}
+
+function renderStockCandidatePicker(candidates) {
+  panelLabel.textContent = "Áru hozzáadása - Bizonylatok";
+  contentContainer.innerHTML = `
+    <div class="container-fluid py-3">
+      <div class="alert alert-success"><i class="bi bi-check-circle me-2"></i>Az áru rögzítése sikerült. Válaszd ki a most létrehozott készlettételt a dokumentumok csatolásához.</div>
+      <div class="row g-3">${candidates.map((stock) => {
+        const id = stock.stockId ?? stock.stockID ?? stock.id;
+        return `<div class="col-12 col-lg-6"><button class="btn btn-outline-primary text-start w-100 p-3" type="button" data-select-stock-documents="${escapeHtml(id)}">
+          <span class="fw-bold d-block">${escapeHtml(stock.productName ?? stock.product?.productName ?? getStockSku(stock))} ${RenderExpiredStockBadge(stock, "ms-1")}</span>
+          <span class="small d-block">Áruazonosító: ${escapeHtml(id)} · Mennyiség: ${escapeHtml(stock.quantity)}</span>
+          <span class="small d-block">Számla: ${escapeHtml(stock.invoiceId)} · Szállítólevél: ${escapeHtml(stock.transitId)}</span>
+        </button></div>`;
+      }).join("")}</div>
+      <button type="button" class="btn btn-outline-secondary btn-lg mt-3" data-stock-documents-finish>Vissza az árufelvételhez</button>
+    </div>
+  `;
+  contentContainer.querySelectorAll("[data-select-stock-documents]").forEach((button) => {
+    button.addEventListener("click", () => renderStockDocumentFollowUp(button.dataset.selectStockDocuments));
+  });
+  contentContainer.querySelector("[data-stock-documents-finish]")?.addEventListener("click", () => {
+    ResetStockForm();
+    DisplayStockStart();
+  });
+}
+
+async function ShowStockDocumentsAfterReceipt(responseData, requestBody) {
+  const createdId = extractCreatedStockId(responseData);
+  if (createdId != null) {
+    renderStockDocumentFollowUp(createdId);
+    return;
+  }
+
+  let listing;
+  try {
+    listing = await GetStockListing();
+  } catch (error) {
+    listing = { success: false, error: error.message || "A készletlista lekérése sikertelen." };
+  }
+  const candidates = listing.success
+    ? findCreatedStockCandidates(listing.data, requestBody)
+    : [];
+
+  if (candidates.length === 1) {
+    renderStockDocumentFollowUp(candidates[0].stockId ?? candidates[0].stockID ?? candidates[0].id);
+    return;
+  }
+  if (candidates.length > 1) {
+    renderStockCandidatePicker(candidates);
+    return;
+  }
+
+  panelLabel.textContent = "Áru hozzáadása - Bizonylatok";
+  contentContainer.innerHTML = `
+    <div class="container-fluid py-3">
+      <div class="alert alert-success"><i class="bi bi-check-circle me-2"></i>Az áru rögzítése sikerült.</div>
+      <div class="alert alert-warning">
+        <h2 class="h5">A dokumentumok most nem kapcsolhatók hozzá</h2>
+        <p class="mb-0">A backend nem adott vissza készlettétel-azonosítót, és a friss készletlistában sem sikerült egyértelműen megtalálni az új tételt. Nyisd meg az Árupanelt, keresd meg a tételt, majd az adatainál töltsd fel a PDF-eket.${listing.success ? "" : ` Betöltési hiba: ${escapeHtml(listing.error)}`}</p>
+      </div>
+      <button type="button" class="btn btn-outline-secondary btn-lg" data-stock-documents-finish>Vissza az árufelvételhez</button>
+      <a class="btn btn-primary btn-lg ms-2" href="../StockPanel/StockPanel.html">Árupanel megnyitása</a>
+    </div>
+  `;
+  contentContainer.querySelector("[data-stock-documents-finish]")?.addEventListener("click", () => {
+    ResetStockForm();
+    DisplayStockStart();
+  });
 }
 
 function ResetStockForm() {

@@ -1,4 +1,5 @@
 import { ProfilAPIs } from "../api/ProfilAPI.js";
+import { NormalizeApiList } from "../../shared/NormalizeApiList.js";
 
 export async function GetAllUsers() {
   const response = await ProfilAPIs.RequestAllUsers();
@@ -9,7 +10,12 @@ export async function GetAllUsers() {
     return null;
   }
 
-  return response.data;
+  const users = NormalizeApiList(response.data);
+  if (!users) {
+    console.error("A backend nem felhasználólistát adott vissza:", response.data);
+    return null;
+  }
+  return users;
 }
 
 async function HandleUserAction(apiCall) {

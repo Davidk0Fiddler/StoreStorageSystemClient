@@ -1,3 +1,4 @@
+import { SetProductImageSource } from "../../../shared/ProductImage.js";
 export function OpenProductSearchPanel() {
   const modalElement = document.getElementById("select-product-modal");
 
@@ -36,7 +37,7 @@ export function ShowSelectedProduct(product) {
   const selectedProductName = document.getElementById("selected-product-name");
 
   if (selectedProductImage) {
-    selectedProductImage.src = product.imageURL ?? "";
+    SetProductImageSource(selectedProductImage, product.imageURL || product.productImageURL, { loading: "eager" });
   }
 
   if (selectedProductName) {

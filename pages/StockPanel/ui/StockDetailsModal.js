@@ -1,3 +1,4 @@
+import { SetProductImageSource } from "../../shared/ProductImage.js";
 import {
   GetStockById,
   UpdateStockShopQuantity,
@@ -9,6 +10,9 @@ import {
 } from "../features/StockState.js";
 
 import { DisplayAlert as DisplayStockAlert } from "../../shared/Alert.js";
+import { RenderStockDocumentsSection } from "../../shared/stockDocuments/StockDocumentsUI.js";
+import { LoadStockDocumentsSection } from "../../shared/stockDocuments/StockDocumentsFeature.js";
+import { IsExpiredStock } from "../../shared/ExpiredStockBadge.js";
 
 export async function ShowStockDetails(stockId) {
   const stock = await GetStockById(stockId);
@@ -23,7 +27,11 @@ export async function ShowStockDetails(stockId) {
   const modalElement = document.getElementById("stock-details-modal");
   const modal = bootstrap.Modal.getOrCreateInstance(modalElement);
 
-  document.getElementById("modal-product-image").src = stock.product.imageURL;
+  SetProductImageSource(
+    document.getElementById("modal-product-image"),
+    stock.product.imageURL || stock.imageURL || stock.product.productImageURL,
+    { loading: "eager" },
+  );
 
   document.getElementById("modal-product-name").textContent =
     stock.product.productName;
@@ -58,8 +66,23 @@ export async function ShowStockDetails(stockId) {
 
   document.getElementById("modal-expiration").textContent =
     stock.expirationDate;
+  document.getElementById("modal-expired-badge")?.classList.toggle("d-none", !IsExpiredStock(stock));
 
   document.getElementById("modal-recieved").textContent = stock.recievedAt;
+
+  const documentHost = document.getElementById("modal-stock-documents");
+  if (documentHost) {
+    const isAdmin = sessionStorage.getItem("roleName") === "Admin";
+    documentHost.classList.toggle("d-none", !isAdmin);
+    documentHost.innerHTML = isAdmin
+      ? RenderStockDocumentsSection(stock.stockId ?? stock.id ?? stockId)
+      : "";
+    if (isAdmin) {
+      void LoadStockDocumentsSection(
+        documentHost.querySelector("[data-stock-document-section]"),
+      );
+    }
+  }
 
   document
     .getElementById("modal-product-discount")

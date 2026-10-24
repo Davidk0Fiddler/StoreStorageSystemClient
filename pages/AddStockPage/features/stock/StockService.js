@@ -1,4 +1,5 @@
 import { AddStockAPIs } from "../../api/AddStockAPIs.js";
+import { NormalizeApiList } from "../../../shared/NormalizeApiList.js";
 
 export async function GetProductByBarcode(barcode) {
   const response = await AddStockAPIs.RequestProductByBarcode(barcode);
@@ -42,9 +43,18 @@ export async function GetProducts() {
     };
   }
 
+  const products = NormalizeApiList(response.data);
+
+  if (!products) {
+    return {
+      success: false,
+      error: "A backend nem terméklistát adott vissza.",
+    };
+  }
+
   return {
     success: true,
-    data: response.data,
+    data: products,
   };
 }
 
@@ -62,4 +72,19 @@ export async function AddStock(stockData) {
     success: true,
     data: response.data,
   };
+}
+
+export async function GetStockListing() {
+  const response = await AddStockAPIs.RequestAllStocksListing();
+  if (!response.success) {
+    return {
+      success: false,
+      error: response.data ?? "Nem sikerült lekérni a készlettételeket.",
+    };
+  }
+
+  const items = NormalizeApiList(response.data);
+  return items
+    ? { success: true, data: items }
+    : { success: false, error: "A backend nem készletlistát adott vissza." };
 }

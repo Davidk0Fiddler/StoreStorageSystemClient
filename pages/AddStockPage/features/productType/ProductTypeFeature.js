@@ -30,6 +30,7 @@ import {
 } from "../../ui/productType/ProductTypeModals.js";
 
 import { DisplayAlert } from "../../../shared/Alert.js";
+import { AddEventListenerOnce } from "../../../shared/AddEventListenerOnce.js";
 import { LoadingSpinner } from "../../../shared/LoadSpinner.js";
 
 let productTypes = [];
@@ -281,11 +282,21 @@ function RegisterProductTypeCreateEvents() {
 
   const saveButton = document.getElementById("producttype-create-save-button");
 
-  saveButton?.addEventListener("click", HandleCreateProductType);
+  AddEventListenerOnce(
+    saveButton,
+    "click",
+    HandleCreateProductType,
+    "create-product-type",
+  );
 }
 
 function RegisterProductTypeUpdateEvents() {
   const saveButton = document.getElementById("producttype-update-save-button");
 
-  saveButton?.addEventListener("click", HandleUpdateProductType);
+  AddEventListenerOnce(
+    saveButton,
+    "click",
+    HandleUpdateProductType,
+    "update-product-type",
+  );
 }

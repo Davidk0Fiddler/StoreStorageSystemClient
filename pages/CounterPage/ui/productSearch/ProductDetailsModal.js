@@ -1,3 +1,4 @@
+import { SetProductImageSource } from "../../../shared/ProductImage.js";
 export function RenderProductDetailsModal(product) {
   if (!product) {
     return;
@@ -12,8 +13,9 @@ export function RenderProductDetailsModal(product) {
   const size = document.getElementById("details-product-size");
   const depositAmount = document.getElementById("details-deposit-amount");
   const depositBadge = document.getElementById("details-product-deposit");
+  const ageRestrictionBadge = document.getElementById("details-product-age-restriction");
 
-  image.src = product.imageURL || "/images/no-image.png";
+  SetProductImageSource(image, product.imageURL || product.productImageURL, { loading: "eager" });
 
   name.textContent = product.productName;
 
@@ -40,6 +42,18 @@ export function RenderProductDetailsModal(product) {
     depositBadge.classList.remove("d-none");
     depositBadge.className = "badge bg-secondary fs-6 px-3 py-2";
     depositBadge.textContent = "Nem betétdíjas";
+  }
+
+  const canBePurchasedByMinors = product.canBePurchasedByMinors !== false
+    && String(product.canBePurchasedByMinors).toLowerCase() !== "false"
+    && product.canBePurchasedByMinors !== 0;
+  if (ageRestrictionBadge) {
+    ageRestrictionBadge.classList.remove("d-none", "bg-success");
+    ageRestrictionBadge.classList.toggle("bg-danger", !canBePurchasedByMinors);
+    ageRestrictionBadge.classList.toggle("bg-success", canBePurchasedByMinors);
+    ageRestrictionBadge.textContent = canBePurchasedByMinors
+      ? "18 év alatt is vásárolható"
+      : "Csak 18 éven felül";
   }
 }
 

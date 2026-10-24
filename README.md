@@ -13,6 +13,9 @@ talking to a separate backend API.
   product types and product sizes.
 - **Statisztika** – daily / weekly / monthly / yearly income charts (Chart.js),
   top products, brand breakdown, transactions and VAT.
+- **Admin Panel** – külön Admin Page a kritikus termék-, áru- és profilműveletekhez,
+  valamint a shop-, audit- és készletmozgási naplókhoz. A szükséges backend
+  szerződés az `ADMIN_PANEL_BACKEND_API.md` fájlban található.
 
 ## Tech stack
 
@@ -25,7 +28,8 @@ talking to a separate backend API.
 | Secrets      | `dotenv`                                      |
 
 Pages are plain HTML files loaded into the main window via `window.location.href`.
-All backend calls live in `scripts/api/` as small single-purpose modules.
+Backend calls are organized in page-local `api/` modules; shared request handling
+lives under `pages/shared/`.
 
 ## Project structure
 
@@ -41,8 +45,9 @@ All backend calls live in `scripts/api/` as small single-purpose modules.
 │   ├── AddStockPage/       # Create products
 │   ├── StockPanel/         # Stock management
 │   ├── StatisticsPanel/    # Income statistics
-│   └── ProfilPanel/        # User profile
-└── scripts/api/            # One module per backend endpoint
+│   ├── ProfilPanel/        # User profile
+│   ├── AdminPanel/         # Sensitive admin operations
+│   └── shared/             # Shared API caller and page utilities
 ```
 
 ## Requirements

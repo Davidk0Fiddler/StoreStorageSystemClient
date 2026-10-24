@@ -1,4 +1,5 @@
 import { StockAPIs } from "../api/StockAPIs.js";
+import { NormalizeApiList } from "../../shared/NormalizeApiList.js";
 
 export async function GetAllStocks() {
   const response = await StockAPIs.RequestAllStocksListing();
@@ -8,7 +9,12 @@ export async function GetAllStocks() {
     return null;
   }
 
-  return response.data;
+  const stocks = NormalizeApiList(response.data);
+  if (!stocks) {
+    console.error("A backend nem készletlistát adott vissza:", response.data);
+    return null;
+  }
+  return stocks;
 }
 
 export async function GetStockById(id) {

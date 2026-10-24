@@ -1,3 +1,18 @@
+import {
+  ResolveProductImageUrl,
+  SetProductImagePreview,
+  SetProductImageSource,
+} from "../../../shared/ProductImage.js";
+
+export function SetProductCreateImagePreview(file = null) {
+  const image = document.getElementById("product-create-image-preview");
+  SetProductImagePreview(image, file, "");
+}
+
+export function SetProductUpdateImagePreview(file = null) {
+  const image = document.getElementById("product-update-image");
+  SetProductImagePreview(image, file, image?.dataset.originalSrc ?? "");
+}
 export function ShowProductCreateModal() {
   const modalElement = document.getElementById("product-create-modal");
 
@@ -102,6 +117,10 @@ export function GetProductCreateDepositAmount() {
   );
 }
 
+export function GetProductCreateCanBePurchasedByMinors() {
+  return document.getElementById("product-create-minors-input")?.checked ?? true;
+}
+
 export function SetProductCreateDepositAmountDisabled(isDisabled) {
   const input = document.getElementById("product-create-depositamount-input");
 
@@ -130,6 +149,7 @@ export function SetProductDetailedData(product) {
   const depositAmountElement = document.getElementById(
     "product-view-depositamount",
   );
+  const minorsElement = document.getElementById("product-view-minors");
 
   if (nameElement) nameElement.textContent = product.productName ?? "";
   if (barcodeElement) barcodeElement.textContent = product.barcode ?? "";
@@ -141,7 +161,7 @@ export function SetProductDetailedData(product) {
   if (brandElement) brandElement.textContent = product.brand ?? "";
 
   if (imageElement) {
-    imageElement.src = product.imageURL ?? "";
+    SetProductImageSource(imageElement, product.imageURL || product.productImageURL, { loading: "eager" });
     imageElement.alt = product.productName ?? "Termékkép";
   }
 
@@ -153,6 +173,11 @@ export function SetProductDetailedData(product) {
     depositAmountElement.textContent = product.hasDeposit
       ? `${product.depositAmount ?? 0} Ft`
       : "-";
+  }
+  if (minorsElement) {
+    const allowed = product.canBePurchasedByMinors !== false;
+    minorsElement.textContent = allowed ? "Megvásárolható 18 év alatt" : "Csak 18 éven felül vásárolható";
+    minorsElement.className = allowed ? "badge bg-success-subtle text-success" : "badge bg-danger-subtle text-danger";
   }
 }
 
@@ -170,6 +195,9 @@ export function SetProductUpdateData(product) {
   const depositAmountInput = document.getElementById(
     "product-update-depositamount-input",
   );
+  const minorsInput = document.getElementById("product-update-minors-input");
+  const imageInput = document.getElementById("product-update-image-input");
+  const imagePreview = document.getElementById("product-update-image");
 
   if (nameInput) {
     nameInput.value = product.productName ?? "";
@@ -191,6 +219,22 @@ export function SetProductUpdateData(product) {
     depositAmountInput.value = product.depositAmount ?? "";
     depositAmountInput.disabled = !product.hasDeposit;
   }
+  if (minorsInput) minorsInput.checked = product.canBePurchasedByMinors !== false;
+  if (imageInput) imageInput.value = "";
+  if (imagePreview) {
+    imagePreview.dataset.originalSrc = ResolveProductImageUrl(
+      product.imageURL || product.productImageURL,
+    );
+    SetProductImageSource(
+      imagePreview,
+      product.imageURL || product.productImageURL,
+      { loading: "eager" },
+    );
+  }
+}
+
+export function GetProductUpdateCanBePurchasedByMinors() {
+  return document.getElementById("product-update-minors-input")?.checked ?? true;
 }
 
 export function GetProductUpdateName() {
@@ -271,4 +315,7 @@ export function ClearProductCreateInputs() {
   if (hasDepositInput) {
     hasDepositInput.checked = false;
   }
+  const minorsInput = document.getElementById("product-create-minors-input");
+  if (minorsInput) minorsInput.checked = true;
+  SetProductCreateImagePreview();
 }

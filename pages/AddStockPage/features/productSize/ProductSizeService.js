@@ -1,4 +1,5 @@
 import { AddStockAPIs } from "../../api/AddStockAPIs.js";
+import { NormalizeApiList } from "../../../shared/NormalizeApiList.js";
 
 import {
   GetProductSizeFilter,
@@ -16,9 +17,12 @@ export async function GetAllProductSizes() {
     };
   }
 
+  const productSizes = NormalizeApiList(response.data);
+  if (!productSizes) return { success: false, error: "A backend nem termékméret-listát adott vissza." };
+
   return {
     success: true,
-    data: response.data,
+    data: productSizes,
   };
 }
 

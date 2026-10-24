@@ -1,3 +1,5 @@
+import { EscapeHtml } from "../../shared/Html.js";
+
 export function CreateUserCard(user) {
   const card = document.createElement("div");
 
@@ -28,7 +30,7 @@ export function CreateUserCard(user) {
           </div>
 
           <div class="fw-semibold text-truncate">
-            ${user.userName}
+          ${EscapeHtml(user.userName)}
           </div>
         </div>
       </div>
@@ -46,7 +48,7 @@ export function CreateUserCard(user) {
             </div>
 
             <div class="fw-semibold">
-              ${user.roleName}
+              ${EscapeHtml(user.roleName)}
             </div>
           </div>
         </div>
@@ -62,7 +64,7 @@ export function CreateUserCard(user) {
             </div>
 
             <div class="fw-semibold">
-              ${new Date(user.createdAt).toLocaleString("hu-HU")}
+              ${EscapeHtml(new Date(user.createdAt).toLocaleString("hu-HU"))}
             </div>
           </div>
         </div>

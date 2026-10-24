@@ -1,0 +1,285 @@
+.admin-app-shell {
+  width: 100%;
+  max-width: none;
+  min-height: 100vh;
+  min-height: 100dvh;
+  margin: 0;
+  padding: clamp(1rem, 3vw, 3rem);
+}
+
+.admin-card {
+  background: rgba(255, 255, 255, 0.92);
+  color: inherit;
+  cursor: pointer;
+  font: inherit;
+  transition:
+    transform 0.18s ease,
+    box-shadow 0.18s ease;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .admin-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 0.75rem 1.5rem rgba(31, 45, 61, 0.12) !important;
+  }
+}
+
+.admin-card-icon {
+  display: grid;
+  width: 3rem;
+  height: 3rem;
+  place-items: center;
+  border-radius: 0.9rem;
+  background: rgba(13, 110, 253, 0.1);
+  color: #0d6efd;
+  font-size: 1.5rem;
+}
+
+.admin-note {
+  background: rgba(255, 255, 255, 0.72);
+}
+
+.admin-capability-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+}
+
+.admin-search {
+  max-width: 24rem;
+}
+
+.admin-product-thumbnail {
+  width: 3.25rem;
+  height: 3.25rem;
+  flex: 0 0 3.25rem;
+  object-fit: contain;
+}
+
+.admin-product-image-preview {
+  width: 6rem;
+  height: 6rem;
+  flex: 0 0 6rem;
+  object-fit: contain;
+}
+
+.admin-touch-button {
+  min-height: 3rem;
+  padding: 0.65rem 1rem;
+  border-radius: 0.75rem;
+  font-size: 1rem;
+  font-weight: 600;
+  touch-action: manipulation;
+}
+
+.admin-row-actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.5rem;
+  min-width: 15rem;
+}
+
+.admin-status-badge {
+  display: inline-flex;
+  min-height: 2.25rem;
+  align-items: center;
+  gap: 0.45rem;
+  padding: 0.4rem 0.8rem;
+  border-radius: 999px;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.admin-status-badge.is-active {
+  background: #198754;
+  color: #fff;
+}
+
+.admin-status-badge.is-inactive {
+  background: #6c757d;
+  color: #fff;
+}
+
+.admin-card {
+  min-height: 15rem;
+}
+
+.admin-card .card-body {
+  width: 100%;
+  min-height: 100%;
+  align-items: stretch;
+  text-align: left;
+}
+
+.admin-card-copy {
+  display: flex;
+  flex: 1 1 auto;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: center;
+  gap: 0.4rem;
+}
+
+.admin-card-copy > .h5 {
+  margin-bottom: 0;
+}
+
+.admin-card-copy > .text-body-secondary {
+  max-width: 22rem;
+  margin-bottom: 0;
+}
+
+.admin-card .btn {
+  min-height: 3rem;
+  width: min(100%, 15rem);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  align-self: flex-start;
+  font-weight: 600;
+}
+
+.admin-search {
+  min-height: 3rem;
+  padding-inline: 0.9rem;
+}
+
+.admin-search + .btn,
+[data-admin-refresh],
+[data-admin-home],
+[data-log-page],
+[data-log-detail],
+[data-log-type] {
+  min-height: 3rem;
+  padding: 0.65rem 1rem;
+  font-weight: 600;
+  touch-action: manipulation;
+}
+
+#admin-panel-root table td,
+#admin-panel-root table th {
+  padding: 0.9rem 0.75rem;
+}
+
+.admin-editor-modal {
+  overflow: hidden;
+  max-height: calc(100dvh - 1rem);
+}
+
+.admin-editor-header {
+  padding: 1.5rem 1.5rem 0.75rem;
+  background: linear-gradient(135deg, rgba(13, 110, 253, 0.08), transparent 70%);
+}
+
+.admin-editor-icon,
+.admin-confirm-icon {
+  display: grid;
+  width: 3.25rem;
+  height: 3.25rem;
+  flex: 0 0 auto;
+  place-items: center;
+  border-radius: 1rem;
+  background: rgba(13, 110, 253, 0.11);
+  color: #0d6efd;
+  font-size: 1.55rem;
+}
+
+.admin-confirm-icon {
+  width: 4rem;
+  height: 4rem;
+  margin-inline: auto;
+  border-radius: 50%;
+  font-size: 1.8rem;
+}
+
+.admin-help-button {
+  min-width: 3rem;
+  min-height: 3rem;
+  font-size: 1.1rem;
+}
+
+.admin-editor-modal .form-control,
+.admin-editor-modal .form-select,
+.admin-editor-modal .input-group-text {
+  min-height: 3rem;
+  font-size: 1rem;
+}
+
+.admin-editor-modal .modal-footer .btn,
+.admin-confirm-modal .btn,
+#admin-notice-modal .btn {
+  min-height: 3rem;
+  min-width: 7rem;
+  font-weight: 600;
+}
+
+.admin-switch-card {
+  position: relative;
+  padding: 1rem 3rem 1rem 3.25rem;
+  border: 1px solid var(--bs-border-color);
+  border-radius: 0.85rem;
+  background: var(--bs-tertiary-bg);
+}
+
+.admin-switch-card .form-check-input {
+  position: absolute;
+  left: 1rem;
+  margin-left: 0;
+}
+
+.admin-switch-card .admin-help-button {
+  position: absolute;
+  top: 0.7rem;
+  right: 0.7rem;
+}
+
+.admin-audit-hint {
+  padding: 0.85rem 1rem;
+  border-radius: 0.75rem;
+  background: rgba(13, 110, 253, 0.07);
+  color: var(--bs-secondary-color);
+  font-size: 0.9rem;
+}
+
+.admin-log-detail {
+  padding: 0.85rem 1rem;
+  border: 1px solid var(--bs-border-color);
+  border-radius: 0.75rem;
+  background: var(--bs-tertiary-bg);
+}
+
+.admin-card:focus-visible {
+  outline: 3px solid rgba(13, 110, 253, 0.45);
+  outline-offset: 3px;
+}
+
+@media (max-width: 767.98px) {
+  .admin-card {
+    min-height: 12rem;
+  }
+
+  .admin-row-actions {
+    min-width: 13rem;
+    justify-content: flex-start;
+  }
+
+  .admin-touch-button {
+    flex: 1 1 auto;
+  }
+
+  .admin-editor-header {
+    padding: 1rem 1rem 0.75rem;
+  }
+
+  .admin-editor-modal .modal-footer {
+    position: sticky;
+    bottom: 0;
+    z-index: 1;
+    background: var(--bs-modal-bg);
+  }
+
+  #admin-panel-root .table-responsive {
+    overscroll-behavior-inline: contain;
+  }
+}

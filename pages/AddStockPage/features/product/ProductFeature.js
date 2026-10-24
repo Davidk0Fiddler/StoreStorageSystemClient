@@ -1,6 +1,7 @@
 import {
   GetAllProducts,
   GetFilteredProducts,
+  GetProductSearchOptions,
   ActivateProduct,
   DeactivateProduct,
   GetProductBySKU,
@@ -30,6 +31,8 @@ import {
   ShowProductDetailedModal,
   SetProductDetailedData,
   SetProductUpdateData,
+  SetProductCreateImagePreview,
+  SetProductUpdateImagePreview,
   GetProductCreateName,
   GetProductCreateBarcode,
   GetProductCreateSKU,
@@ -39,6 +42,7 @@ import {
   GetProductCreateImage,
   GetProductCreateHasDeposit,
   GetProductCreateDepositAmount,
+  GetProductCreateCanBePurchasedByMinors,
   GetProductUpdateName,
   GetProductUpdateBarcode,
   GetProductUpdateProductType,
@@ -46,6 +50,7 @@ import {
   GetProductUpdateBrand,
   GetProductUpdateHasDeposit,
   GetProductUpdateDepositAmount,
+  GetProductUpdateCanBePurchasedByMinors,
   GetProductUpdateImage,
   SetProductCreateDepositAmountDisabled,
   SetProductUpdateDepositAmountDisabled,
@@ -60,10 +65,13 @@ import {
   HideProductSearchFilter,
   ClearProductSearchInput,
   CloseProductSearchModal,
+  UpdateProductSearchValueControl,
 } from "../../ui/product/ProductSearch.js";
 
 import { DisplayAlert } from "../../../shared/Alert.js";
+import { AddEventListenerOnce } from "../../../shared/AddEventListenerOnce.js";
 import { LoadingSpinner } from "../../../shared/LoadSpinner.js";
+import { IsValidProductImageFile } from "../../../shared/ProductImage.js";
 
 export async function DisplayProductPanel() {
   const contentContainer = document.getElementById("content-container");
@@ -96,6 +104,11 @@ async function LoadProducts() {
     DisplayAlert("danger", response.error);
     return;
   }
+
+  UpdateProductSearchValueControl(
+    GetSearchFilterInput(),
+    GetProductSearchOptions(GetSearchFilterInput()),
+  );
 
   RenderProducts();
 }
@@ -156,6 +169,7 @@ function HandleProductSearchFilterChange(event) {
   };
 
   UpdateProductSearchFilterLabel(labels[filter] ?? "Keresési érték");
+  UpdateProductSearchValueControl(filter, GetProductSearchOptions(filter));
 }
 
 /*
@@ -350,8 +364,14 @@ async function HandleUpdateProduct() {
   const hasDeposit = GetProductUpdateHasDeposit();
 
   const depositAmount = GetProductUpdateDepositAmount();
+  const canBePurchasedByMinors = GetProductUpdateCanBePurchasedByMinors();
 
   const image = GetProductUpdateImage();
+
+  if (image && !IsValidProductImageFile(image)) {
+    DisplayAlert("danger", "JPG, PNG, GIF, WebP vagy BMP képet válassz, legfeljebb 10 MB méretben.");
+    return;
+  }
 
   formData.append("ProductName", name);
   formData.append("Barcode", barcode);
@@ -360,6 +380,7 @@ async function HandleUpdateProduct() {
   formData.append("ProductSizeId", productSize);
   formData.append("BrandId", brand);
   formData.append("HasDeposit", hasDeposit);
+  formData.append("CanBePurchasedByMinors", canBePurchasedByMinors);
 
   if (hasDeposit) {
     formData.append("DepositAmount", depositAmount);
@@ -369,11 +390,24 @@ async function HandleUpdateProduct() {
     formData.append("Image", image);
   }
 
-  LoadingSpinner(true);
+  const saveButton = document.getElementById("product-update-save-button");
+  if (saveButton) saveButton.disabled = true;
 
-  const response = await UpdateProduct(formData, productSKU);
-
-  LoadingSpinner(false);
+  let response;
+  LoadingSpinner(true, image ? "Képfeltöltés: 0%" : "Termék mentése…");
+  try {
+    response = await UpdateProduct(
+      formData,
+      productSKU,
+      image ? ({ percent }) => LoadingSpinner(true, `Képfeltöltés: ${percent}%`) : null,
+    );
+  } catch (error) {
+    DisplayAlert("danger", error.message || "A termék módosítása nem sikerült.");
+    return;
+  } finally {
+    LoadingSpinner(false);
+    if (saveButton) saveButton.disabled = false;
+  }
 
   if (!response.success) {
     DisplayAlert("danger", response.error);
@@ -398,6 +432,7 @@ async function HandleUpdateProduct() {
  */
 
 async function HandleOpenProductCreateModal() {
+  ClearProductCreateInputs();
   await LoadProductCreateSelects();
 
   ShowProductCreateModal();
@@ -481,9 +516,15 @@ async function HandleCreateProduct() {
 
   const image = GetProductCreateImage();
 
+  if (image && !IsValidProductImageFile(image)) {
+    DisplayAlert("danger", "JPG, PNG, GIF, WebP vagy BMP képet válassz, legfeljebb 10 MB méretben.");
+    return;
+  }
+
   const hasDeposit = GetProductCreateHasDeposit();
 
   const depositAmount = GetProductCreateDepositAmount();
+  const canBePurchasedByMinors = GetProductCreateCanBePurchasedByMinors();
 
   formData.append("ProductName", name);
   formData.append("Barcode", barcode);
@@ -492,6 +533,7 @@ async function HandleCreateProduct() {
   formData.append("ProductSizeId", productSize);
   formData.append("BrandId", brand);
   formData.append("HasDeposit", hasDeposit);
+  formData.append("CanBePurchasedByMinors", canBePurchasedByMinors);
 
   if (hasDeposit) {
     formData.append("DepositAmount", depositAmount);
@@ -501,11 +543,23 @@ async function HandleCreateProduct() {
     formData.append("Image", image);
   }
 
-  LoadingSpinner(true);
+  const saveButton = document.getElementById("product-create-save-button");
+  if (saveButton) saveButton.disabled = true;
 
-  const response = await CreateProduct(formData);
-
-  LoadingSpinner(false);
+  let response;
+  LoadingSpinner(true, image ? "Képfeltöltés: 0%" : "Termék mentése…");
+  try {
+    response = await CreateProduct(
+      formData,
+      image ? ({ percent }) => LoadingSpinner(true, `Képfeltöltés: ${percent}%`) : null,
+    );
+  } catch (error) {
+    DisplayAlert("danger", error.message || "A termék létrehozása nem sikerült.");
+    return;
+  } finally {
+    LoadingSpinner(false);
+    if (saveButton) saveButton.disabled = false;
+  }
 
   if (!response.success) {
     DisplayAlert("danger", response.error);
@@ -591,17 +645,36 @@ function RegisterProductListEvents() {
 }
 
 function RegisterProductSearchEvents() {
+  const dismissButton = document.getElementById("dismiss-search-filter-button");
+  dismissButton?.addEventListener("click", HandleDismissProductSearch);
+
   const searchButton = document.getElementById("product-search-button");
 
-  searchButton?.addEventListener("click", HandleProductSearch);
-
-  const dismissButton = document.getElementById("dismiss-search-filter-button");
-
-  dismissButton?.addEventListener("click", HandleDismissProductSearch);
+  AddEventListenerOnce(searchButton, "click", HandleProductSearch, "search");
 
   const filterSelect = document.getElementById("product-search-filter-select");
 
-  filterSelect?.addEventListener("change", HandleProductSearchFilterChange);
+  AddEventListenerOnce(
+    filterSelect,
+    "change",
+    HandleProductSearchFilterChange,
+    "filter-change",
+  );
+
+  const searchControl = document.getElementById("product-search-filter-control");
+  AddEventListenerOnce(
+    searchControl,
+    "keydown",
+    (event) => {
+      if (event.target.id !== "product-search-filter-input") return;
+      if (event.key !== "Enter") return;
+
+      event.preventDefault();
+      HandleProductSearch();
+    },
+    "enter-search",
+  );
+
 }
 
 function RegisterProductCreateEvents() {
@@ -613,27 +686,67 @@ function RegisterProductCreateEvents() {
 
   const saveButton = document.getElementById("product-create-save-button");
 
-  saveButton?.addEventListener("click", HandleCreateProduct);
+  AddEventListenerOnce(saveButton, "click", HandleCreateProduct, "save-product");
 
   const hasDepositInput = document.getElementById(
     "product-create-hasdeposit-input",
   );
 
-  hasDepositInput?.addEventListener("change", () => {
-    SetProductCreateDepositAmountDisabled(!hasDepositInput.checked);
-  });
+  AddEventListenerOnce(
+    hasDepositInput,
+    "change",
+    () => SetProductCreateDepositAmountDisabled(!hasDepositInput.checked),
+    "toggle-deposit",
+  );
+
+  AddEventListenerOnce(
+    document.getElementById("product-create-image-input"),
+    "change",
+    (event) => SetProductCreateImagePreview(event.currentTarget.files?.[0] ?? null),
+    "preview-image",
+  );
+
+  const modalElement = document.getElementById("product-create-modal");
+  AddEventListenerOnce(
+    modalElement,
+    "hidden.bs.modal",
+    ClearProductCreateInputs,
+    "clear-create-form",
+  );
 }
 
 function RegisterProductUpdateEvents() {
   const saveButton = document.getElementById("product-update-save-button");
 
-  saveButton?.addEventListener("click", HandleUpdateProduct);
+  AddEventListenerOnce(saveButton, "click", HandleUpdateProduct, "save-product");
 
   const hasDepositInput = document.getElementById(
     "product-update-hasdeposit-input",
   );
 
-  hasDepositInput?.addEventListener("change", () => {
-    SetProductUpdateDepositAmountDisabled(!hasDepositInput.checked);
-  });
+  AddEventListenerOnce(
+    hasDepositInput,
+    "change",
+    () => SetProductUpdateDepositAmountDisabled(!hasDepositInput.checked),
+    "toggle-deposit",
+  );
+
+  AddEventListenerOnce(
+    document.getElementById("product-update-image-input"),
+    "change",
+    (event) => SetProductUpdateImagePreview(event.currentTarget.files?.[0] ?? null),
+    "preview-image",
+  );
+
+  const modalElement = document.getElementById("product-update-modal");
+  AddEventListenerOnce(
+    modalElement,
+    "hidden.bs.modal",
+    () => {
+      const input = document.getElementById("product-update-image-input");
+      if (input) input.value = "";
+      SetProductUpdateImagePreview();
+    },
+    "clear-update-form",
+  );
 }

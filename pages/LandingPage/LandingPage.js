@@ -1,11 +1,21 @@
-import RequestExpirationCheck from "../../scripts/api/RequestExpirationCheck.js";
+import { ResolveProductThumbnailUrl } from "../shared/ProductImage.js";
+import { EscapeHtml } from "../shared/Html.js";
+import { RequestExpirationCheck } from "./api/LandingApi.js";
+import { RenderExpiredStockBadge } from "../shared/ExpiredStockBadge.js";
 
 function InitializeUserData() {
   const userName = sessionStorage.getItem("userName");
   const roleName = sessionStorage.getItem("roleName");
 
-  document.getElementById("brand-name").innerHTML =
-    `Hello ${userName}! <i class="bi bi-person-fill" style="cursor:pointer" data-bs-toggle="modal" data-bs-target="#user-data-modal"></i>`;
+  const brandName = document.getElementById("brand-name");
+  brandName.replaceChildren(document.createTextNode(`Hello ${userName ?? ""}! `));
+
+  const profileIcon = document.createElement("i");
+  profileIcon.className = "bi bi-person-fill";
+  profileIcon.style.cursor = "pointer";
+  profileIcon.dataset.bsToggle = "modal";
+  profileIcon.dataset.bsTarget = "#user-data-modal";
+  brandName.appendChild(profileIcon);
 
   document.getElementById("user-name").textContent = userName;
 
@@ -141,14 +151,14 @@ function ShowExpiringProductAlert() {
 }
 
 async function ExpirationCheck() {
-  const result = await RequestExpirationCheck();
-
-  console.log(result);
-
-  if (result.isAnyExpiring) {
-    expiringElements = result.expiringStocks;
-
-    ShowExpiringProductAlert();
+  try {
+    const result = await RequestExpirationCheck();
+    if (result?.isAnyExpiring && Array.isArray(result.expiringStocks)) {
+      expiringElements = result.expiringStocks;
+      ShowExpiringProductAlert();
+    }
+  } catch {
+    // A háttérben futó lejáratellenőrzés hibája ne akadályozza a főmenü használatát.
   }
 }
 
@@ -181,8 +191,11 @@ function FillExpiringProducts(products) {
           style="width: 56px; height: 56px;"
         >
           <img
-            src="${product.imageUrl}"
-            alt="${product.productName}"
+            data-product-image="true"
+            src="${EscapeHtml(ResolveProductThumbnailUrl(product.thumbnailURL || product.thumbnailUrl || product.productThumbnailURL || product.productThumbnailUrl, product.imageURL || product.productImageURL || product.imageUrl))}"
+            alt="${EscapeHtml(product.productName)}"
+            loading="lazy"
+            decoding="async"
             class="rounded-2"
             style="
               width: 48px;
@@ -195,13 +208,13 @@ function FillExpiringProducts(products) {
 
       <td>
         <span class="fw-semibold">
-          ${product.productName}
+          ${EscapeHtml(product.productName)} ${RenderExpiredStockBadge(product, "ms-1")}
         </span>
       </td>
 
       <td class="text-center">
         <span class="fw-semibold">
-          ${product.quantity}
+          ${EscapeHtml(product.quantity)}
         </span>
       </td>
 
@@ -260,5 +273,7 @@ function InitializePage() {
   InitializeExpirationAlert();
 }
 
-InitializePage();
-await ExpirationCheck();
+if (window.__pageAccessAllowed === true) {
+  InitializePage();
+  void ExpirationCheck();
+}

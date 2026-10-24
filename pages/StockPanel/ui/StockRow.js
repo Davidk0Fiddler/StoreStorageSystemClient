@@ -1,3 +1,6 @@
+import { ResolveProductThumbnailUrl } from "../../shared/ProductImage.js";
+import { EscapeHtml } from "../../shared/Html.js";
+import { IsExpiredStock, RenderExpiredStockBadge } from "../../shared/ExpiredStockBadge.js";
 function ReturnActiveOrInactiveBadge(isActive) {
   if (isActive) {
     return `<span class="badge bg-success fs-6 px-3 py-2">Aktív</span>`;
@@ -6,14 +9,14 @@ function ReturnActiveOrInactiveBadge(isActive) {
   return `<span class="badge bg-danger fs-6 px-3 py-2">Inaktív</span>`;
 }
 
-function GetDaysBetweenDates(date1, date2) {
+function GetDaysUntilDate(date1, date2) {
   const [y1, m1, d1] = date1.split("-").map(Number);
   const [y2, m2, d2] = date2.split("-").map(Number);
 
   const firstDate = Date.UTC(y1, m1 - 1, d1);
   const secondDate = Date.UTC(y2, m2 - 1, d2);
 
-  return Math.abs((secondDate - firstDate) / 86400000);
+  return (secondDate - firstDate) / 86400000;
 }
 
 function GetTodayDate() {
@@ -28,13 +31,13 @@ export function CreateStockRow(stock, onClick) {
   row.style.cursor = "pointer";
 
   const today = GetTodayDate();
-  const differenceInDays = GetDaysBetweenDates(today, stock.expirationDate);
+  const daysUntilExpiration = GetDaysUntilDate(today, stock.expirationDate);
 
   if (stock.isActive) {
-    if (differenceInDays <= 30 && differenceInDays > 0) {
-      row.classList.add("expiring-soon");
-    } else if (differenceInDays <= 0) {
+    if (IsExpiredStock(stock)) {
       row.classList.add("expired");
+    } else if (daysUntilExpiration <= 30) {
+      row.classList.add("expiring-soon");
     }
   }
 
@@ -42,17 +45,21 @@ export function CreateStockRow(stock, onClick) {
     <td>
       <div class="d-flex align-items-center">
         <img
-          src="${stock.imageURL}"
+          data-product-image="true"
+          src="${EscapeHtml(ResolveProductThumbnailUrl(stock.thumbnailURL || stock.thumbnailUrl || stock.product?.thumbnailURL || stock.product?.thumbnailUrl || stock.product?.productThumbnailURL || stock.product?.productThumbnailUrl, stock.imageURL || stock.product?.imageURL || stock.product?.productImageURL))}"
           class="rounded border me-3"
           width="70"
           height="70"
+          alt="${EscapeHtml(stock.productName ?? "Termék")}"
+          loading="lazy"
+          decoding="async"
         />
 
         <div>
-          <div class="fw-bold">${stock.productName}</div>
+          <div class="fw-bold">${EscapeHtml(stock.productName)} ${RenderExpiredStockBadge(stock, "ms-1")}</div>
 
           <small class="text-muted">
-            ${stock.brand} • ${stock.productType}
+            ${EscapeHtml(stock.brand)} • ${EscapeHtml(stock.productType)}
           </small>
         </div>
       </div>
@@ -62,20 +69,20 @@ export function CreateStockRow(stock, onClick) {
       <div class="text-muted small">Mennyiség</div>
 
       <div class="fw-bold fs-5">
-        ${stock.quantity} / ${stock.originalQuantity} ${stock.productSize}
+        ${EscapeHtml(stock.quantity)} / ${EscapeHtml(stock.originalQuantity)} ${EscapeHtml(stock.productSize)}
       </div>
     </td>
 
     <td class="text-center">
-      <div class="text-muted small">Ár / ${stock.productSize}</div>
+      <div class="text-muted small">Ár / ${EscapeHtml(stock.productSize)}</div>
 
-      <div class="fw-bold fs-5">${stock.price} Ft</div>
+      <div class="fw-bold fs-5">${EscapeHtml(stock.price)} Ft</div>
     </td>
 
     <td class="text-center">
       <div class="text-muted small">Lejárati dátum</div>
 
-      <div class="fw-bold fs-5">${stock.expirationDate}</div>
+      <div class="fw-bold fs-5">${EscapeHtml(stock.expirationDate)}</div>
     </td>
 
     <td class="text-center">

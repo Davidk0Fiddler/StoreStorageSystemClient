@@ -1,11 +1,17 @@
+import { ResolveProductThumbnailUrl } from "../../../shared/ProductImage.js";
+import { EscapeHtml } from "../../../shared/Html.js";
+import { RenderProductAgeRestrictionSticker } from "../../../shared/ProductAgeRestrictionSticker.js";
+
 export function RenderStockProductCard(product) {
   return `
     <div class="col-xl-2 col-lg-3 col-md-4 col-sm-6">
 
       <div
         class="card product-card h-100"
-        data-product-sku="${product.sku}"
+        data-product-sku="${EscapeHtml(product.sku)}"
+        style="position: relative;"
       >
+        ${RenderProductAgeRestrictionSticker(product)}
 
         <!-- Termékkép -->
         <div
@@ -14,10 +20,13 @@ export function RenderStockProductCard(product) {
         >
 
           <img
-            src="${product.productImageURL ?? ""}"
+            data-product-image="true"
+            src="${EscapeHtml(ResolveProductThumbnailUrl(product.thumbnailURL || product.thumbnailUrl || product.productThumbnailURL || product.productThumbnailUrl, product.productImageURL || product.imageURL))}"
             class="product-image img-fluid"
             style="max-height: 130px; max-width: 100%; object-fit: contain;"
-            alt="${product.productName ?? "Termék"}"
+            alt="${EscapeHtml(product.productName ?? "Termék")}"
+            loading="lazy"
+            decoding="async"
           />
 
         </div>
@@ -30,7 +39,7 @@ export function RenderStockProductCard(product) {
           <div
             class="text-center fw-semibold"
           >
-            ${product.productName ?? "Ismeretlen termék"}
+            ${EscapeHtml(product.productName ?? "Ismeretlen termék")}
           </div>
 
         </div>

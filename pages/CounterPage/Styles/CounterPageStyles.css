@@ -236,6 +236,29 @@
   overflow: hidden;
 }
 
+.product-age-restriction-sticker {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  z-index: 2;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 46px;
+  height: 46px;
+  border: 3px solid #fff;
+  border-radius: 50%;
+  background: #c62828;
+  color: #fff;
+  font-size: 1rem;
+  font-weight: 800;
+  line-height: 1;
+  letter-spacing: -0.04em;
+  box-shadow: 0 2px 8px rgba(80, 0, 0, 0.32);
+  transform: rotate(8deg);
+  pointer-events: none;
+}
+
 /* =========================================
    JOBB OLDAL / KOSÁR
 ========================================= */
@@ -489,6 +512,145 @@
   padding: 24px;
 
   box-shadow: 0 10px 40px rgba(0, 0, 0, 0.25);
+}
+
+.cash-register-reminder {
+  position: fixed;
+  inset: 0;
+  z-index: 10000;
+  display: grid;
+  place-items: center;
+  padding: 1rem;
+  background: rgba(15, 23, 42, 0.76);
+}
+
+.cash-register-reminder__dialog {
+  width: min(36rem, 100%);
+  max-height: calc(100vh - 2rem);
+  overflow-y: auto;
+  padding: clamp(1.25rem, 4vw, 2.5rem);
+  border: 1px solid rgba(255, 255, 255, 0.55);
+  border-radius: 1.25rem;
+  background: #fff;
+  box-shadow: 0 1.5rem 4rem rgba(0, 0, 0, 0.3);
+  text-align: center;
+}
+
+.cash-register-reminder__icon {
+  display: grid;
+  width: 4.5rem;
+  height: 4.5rem;
+  margin: 0 auto 1rem;
+  place-items: center;
+  border-radius: 50%;
+  background: #fff3cd;
+  color: #8a5b00;
+  font-size: 2rem;
+}
+
+.cash-register-reminder__eyebrow {
+  margin-bottom: 0.35rem;
+  color: #6c757d;
+  font-size: 0.8rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.cash-register-reminder__title {
+  margin-bottom: 0.75rem;
+  font-size: clamp(1.35rem, 4vw, 1.8rem);
+  font-weight: 800;
+}
+
+.cash-register-reminder__copy {
+  margin-bottom: 1rem;
+  color: #5c6770;
+}
+
+.cash-register-reminder__vat-heading {
+  margin-bottom: 0.5rem;
+  color: #343a40;
+  font-weight: 800;
+  text-align: left;
+}
+
+.cash-register-reminder__vat-list {
+  margin: 0 0 1rem;
+  padding: 0.35rem 1rem;
+  border: 1px solid #dee2e6;
+  border-radius: 0.75rem;
+  background: #f8f9fa;
+}
+
+.cash-register-reminder__vat-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 0.55rem 0;
+  text-align: left;
+}
+
+.cash-register-reminder__vat-row + .cash-register-reminder__vat-row {
+  border-top: 1px solid #e2e6ea;
+}
+
+.cash-register-reminder__vat-row dt,
+.cash-register-reminder__vat-row dd {
+  margin: 0;
+}
+
+.cash-register-reminder__vat-row dt {
+  font-weight: 700;
+}
+
+.cash-register-reminder__vat-row dt span {
+  color: #6c757d;
+  font-size: 0.8rem;
+  font-weight: 500;
+}
+
+.cash-register-reminder__vat-row dd {
+  flex: 0 0 auto;
+  font-weight: 800;
+  font-variant-numeric: tabular-nums;
+}
+
+.cash-register-reminder__amount-label {
+  color: #6c757d;
+  font-size: 0.95rem;
+  font-weight: 700;
+}
+
+.cash-register-reminder__amount {
+  margin: 0.2rem 0 1.5rem;
+  color: #146c43;
+  font-size: clamp(2rem, 7vw, 3rem);
+  font-weight: 900;
+  line-height: 1.15;
+}
+
+.cash-register-reminder__actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.75rem;
+}
+
+.cash-register-reminder__actions .btn {
+  min-height: 3.5rem;
+  font-weight: 700;
+}
+
+@media (max-width: 575.98px) {
+  .cash-register-reminder__actions {
+    flex-direction: column-reverse;
+  }
+
+  .cash-register-reminder__actions .btn {
+    width: 100%;
+  }
 }
 
 .quantity-modal-header {

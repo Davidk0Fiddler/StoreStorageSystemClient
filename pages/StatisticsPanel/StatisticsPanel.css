@@ -215,6 +215,12 @@
   margin-right: 0;
 }
 
+#sold-products-list {
+  max-height: min(58vh, 620px);
+  min-height: 0;
+  overscroll-behavior: contain;
+}
+
 /* =========================
    TÁBLÁZAT
    ========================= */
@@ -235,6 +241,10 @@
    ========================= */
 
 @media (max-width: 900px) {
+  #sold-products-list {
+    max-height: 45vh;
+  }
+
   .statistics-income-grid {
     grid-template-columns: minmax(0, 1fr);
     grid-template-rows: auto;

@@ -1,0 +1,36 @@
+<!doctype html>
+<html lang="hu" data-required-roles="Admin">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <script src="../shared/RoleGuard.js"></script>
+    <link
+      rel="stylesheet"
+      href="../../node_modules/bootstrap/dist/css/bootstrap.min.css"
+    />
+    <link
+      rel="stylesheet"
+      href="../../node_modules/bootstrap-icons/font/bootstrap-icons.css"
+    />
+    <link rel="stylesheet" href="../backgroundShapes.css" />
+    <link rel="stylesheet" href="../shared/stockDocuments/StockDocuments.css" />
+    <link rel="stylesheet" href="./AdminPanel.css" />
+    <title>Admin Panel — Termelői bolt</title>
+  </head>
+  <body>
+    <div class="background-shapes" aria-hidden="true">
+      <div class="shape shape-1"></div>
+      <div class="shape shape-2"></div>
+      <div class="shape shape-3"></div>
+      <div class="shape shape-4"></div>
+    </div>
+
+    <main id="admin-panel-root" class="container-fluid admin-app-shell">
+      <!-- Az Admin Panel felületét az UI modul rajzolja ki. -->
+    </main>
+
+    <script src="../../node_modules/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script type="module" src="./AdminPanel.js"></script>
+    <script src="../shared/PageTitle.js"></script>
+  </body>
+</html>

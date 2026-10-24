@@ -1,4 +1,5 @@
-import SendingLoginRequest from "../../scripts/api/SendLoginRequest.js";
+import { SendLoginRequest } from "./api/LoginApi.js";
+import { EscapeHtml } from "../shared/Html.js";
 
 const usernameField = document.getElementById("login-username-field");
 
@@ -15,7 +16,7 @@ const tooltip = new bootstrap.Tooltip(tooltipElement);
 function ValidateFields() {
   const username = usernameField.value.trim();
 
-  const password = passwordField.value.trim();
+  const password = passwordField.value;
 
   const isValid = username !== "" && password !== "";
 
@@ -65,6 +66,11 @@ function GetAlertIcon(type) {
 
 function DisplayAlert(type, message) {
   const alertPlaceholder = document.getElementById("liveAlertPlaceholder");
+  if (!alertPlaceholder) return;
+
+  const alertType = ["success", "danger", "warning", "info"].includes(type)
+    ? type
+    : "info";
 
   alertPlaceholder.innerHTML = "";
 
@@ -72,15 +78,15 @@ function DisplayAlert(type, message) {
 
   wrapper.innerHTML = `
     <div
-      class="alert modern-alert alert-${type} fade show"
+      class="alert modern-alert alert-${alertType} fade show"
       role="alert"
     >
       <div class="modern-alert-icon">
-        <i class="${GetAlertIcon(type)}"></i>
+        <i class="${GetAlertIcon(alertType)}"></i>
       </div>
 
       <div class="modern-alert-message">
-        ${message}
+        ${EscapeHtml(message)}
       </div>
 
       <button
@@ -132,9 +138,9 @@ async function HandleLogin(event) {
   try {
     SetLoadingState(true);
 
-    const response = await SendingLoginRequest(
+    const response = await SendLoginRequest(
       usernameField.value.trim(),
-      passwordField.value.trim(),
+      passwordField.value,
     );
 
     sessionStorage.setItem("roleName", response.roleName);
@@ -164,12 +170,16 @@ function InitializeEventListeners() {
 
   togglePasswordButton.addEventListener("click", TogglePasswordVisibility);
 
-  loginButton.addEventListener("click", HandleLogin);
+  loginButton.closest("form")?.addEventListener("submit", HandleLogin);
 }
 
 function InitializePage() {
   InitializeEventListeners();
   ValidateFields();
+
+  if (new URLSearchParams(window.location.search).get("reason") === "session-expired") {
+    DisplayAlert("warning", "A munkamenet lejárt. Jelentkezzen be újra a folytatáshoz.");
+  }
 }
 
 InitializePage();

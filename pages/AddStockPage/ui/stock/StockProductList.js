@@ -35,7 +35,7 @@ export function RenderStockProductList() {
 
               <img
                 id="selected-product-image"
-                src=""
+                data-product-image="true"
                 class="img-fluid rounded mb-4"
                 style="
                   max-height: 200px;
@@ -43,6 +43,8 @@ export function RenderStockProductList() {
                   object-fit: contain;
                 "
                 alt="Kiválasztott termék"
+                loading="eager"
+                decoding="async"
               />
 
               <h4

@@ -163,6 +163,19 @@ export function RenderStockPanel() {
         </div>
       </div>
 
+      ${sessionStorage.getItem("roleName") === "Admin" ? `
+        <div class="card shadow-sm mb-4">
+          <div class="card-header">
+            <h4 class="mb-0"><i class="bi bi-file-earmark-pdf me-2"></i>Bizonylatok</h4>
+          </div>
+          <div class="card-body">
+            <div class="alert alert-info mb-0">
+              A számlát és a szállítólevelet az áru rögzítése után lehet ehhez a készlettételhez csatolni.
+            </div>
+          </div>
+        </div>
+      ` : ""}
+
       <!-- Műveletek -->
       <div class="d-flex justify-content-end gap-3 pb-4">
 

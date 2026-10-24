@@ -1,9 +1,10 @@
 <!doctype html>
-<html lang="en">
+<html lang="hu" data-required-roles="Admin">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Profil Panel</title>
+    <script src="../shared/RoleGuard.js"></script>
+    <title>Felhasználók — Termelői bolt</title>
     <link
       rel="stylesheet"
       href="../../node_modules/bootstrap/dist/css/bootstrap.min.css"
@@ -65,7 +66,7 @@
               type="button"
               class="btn-close"
               data-bs-dismiss="modal"
-              aria-label="Close"
+              aria-label="Bezárás"
             ></button>
           </div>
 
@@ -197,7 +198,7 @@
           type="button"
           class="btn-close"
           data-bs-dismiss="offcanvas"
-          aria-label="Close"
+          aria-label="Bezárás"
         ></button>
       </div>
       <div class="offcanvas-body">
@@ -205,7 +206,7 @@
           <div
             class="btn btn-outline-secondary col-10 p-2 mb-3 fw-bold"
             data-bs-dismiss="offcanvas"
-            aria-label="Close"
+            aria-label="Bezárás"
             id="profil-panel-sidebar-button"
           >
             <i class="bi bi-people"></i>
@@ -241,7 +242,7 @@
           style="width: 3rem; height: 3rem"
           role="status"
         >
-          <span class="visually-hidden">Loading...</span>
+          <span class="visually-hidden">Betöltés…</span>
         </div>
       </div>
     </section>
@@ -349,5 +350,6 @@
 
     <script src="../../node_modules/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script type="module" src="ProfilPanel.js"></script>
-  </body>
+    <script src="../shared/PageTitle.js"></script>
+</body>
 </html>

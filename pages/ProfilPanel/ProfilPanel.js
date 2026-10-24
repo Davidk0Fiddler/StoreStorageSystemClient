@@ -27,4 +27,4 @@ function InitializePage() {
   InitializeUserFeature();
 }
 
-InitializePage();
+if (window.__pageAccessAllowed === true) InitializePage();

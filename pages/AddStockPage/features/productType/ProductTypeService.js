@@ -1,4 +1,5 @@
 import { AddStockAPIs } from "../../api/AddStockAPIs.js";
+import { NormalizeApiList } from "../../../shared/NormalizeApiList.js";
 
 import {
   GetProductTypeFilter,
@@ -16,9 +17,12 @@ export async function GetAllProductTypes() {
     };
   }
 
+  const productTypes = NormalizeApiList(response.data);
+  if (!productTypes) return { success: false, error: "A backend nem terméktípus-listát adott vissza." };
+
   return {
     success: true,
-    data: response.data,
+    data: productTypes,
   };
 }
 

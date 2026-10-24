@@ -158,6 +158,8 @@ export async function AddToCart(product, quantity) {
     {
       productName: product.productName,
 
+      productType: product.productType ?? product.productTypeName ?? product.type ?? "",
+
       unitPrice: availability.unitPrice,
 
       sku: product.sku,

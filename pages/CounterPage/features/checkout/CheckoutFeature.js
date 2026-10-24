@@ -26,6 +26,7 @@ import { CreateReceiptItem } from "../../ui/checkout/Receipt.js";
 import { ClearSelectedProducts } from "../cart/CartFeature.js";
 
 import { DisplayAlert } from "../../../shared/Alert.js";
+import { AskCashRegisterAmountConfirmation } from "../../ui/checkout/CashRegisterReminder.js";
 
 function GetCurrentDateTime() {
   const now = new Date();
@@ -51,6 +52,7 @@ function CalculateCheckoutTotals(products) {
   let afa18 = 0;
   let afa5 = 0;
   let afa0 = 0;
+  const productTypesByVAT = { 27: new Set(), 18: new Set(), 5: new Set(), 0: new Set() };
 
   products.forEach((selectedProduct) => {
     const product = selectedProduct.product;
@@ -64,7 +66,15 @@ function CalculateCheckoutTotals(products) {
 
     totalPrice += productTotal + depositTotal;
 
-    switch (product.afaPercent) {
+    const vatRate = Number(product.afaPercent);
+    const productType = typeof product.productType === "string"
+      ? product.productType.trim()
+      : String(product.productType?.productTypeName ?? product.productType?.name ?? "").trim();
+    if (productTypesByVAT[vatRate] && productType) {
+      productTypesByVAT[vatRate].add(productType);
+    }
+
+    switch (vatRate) {
       case 27:
         afa27 += productTotal;
         break;
@@ -94,6 +104,9 @@ function CalculateCheckoutTotals(products) {
     afa18,
     afa5,
     afa0,
+    productTypesByVAT: Object.fromEntries(
+      Object.entries(productTypesByVAT).map(([rate, types]) => [rate, [...types]]),
+    ),
   };
 }
 
@@ -105,10 +118,9 @@ function RenderCheckout(products) {
   }
 
   ClearReceiptItems();
-
-  products.forEach((selectedProduct) => {
-    receiptItemsArea.innerHTML += CreateReceiptItem(selectedProduct);
-  });
+  receiptItemsArea.innerHTML = products
+    .map((selectedProduct) => CreateReceiptItem(selectedProduct))
+    .join("");
 
   const totals = CalculateCheckoutTotals(products);
 
@@ -121,6 +133,7 @@ function RenderCheckout(products) {
     afa18: totals.afa18,
     afa5: totals.afa5,
     afa0: totals.afa0,
+    productTypesByVAT: totals.productTypesByVAT,
   });
 }
 
@@ -199,13 +212,28 @@ function InitializeCheckoutEvents() {
   const savePurchaseButton = GetSavePurchaseButton();
 
   savePurchaseButton?.addEventListener("click", async () => {
-    const success = await SaveCheckout();
+    savePurchaseButton.disabled = true;
+    try {
+      const totals = CalculateCheckoutTotals(GetProductsForCheckout());
+      const confirmed = await AskCashRegisterAmountConfirmation({
+        total: GetTotalForCheckout(),
+        vatTotals: {
+          27: totals.afa27,
+          18: totals.afa18,
+          5: totals.afa5,
+          0: totals.afa0,
+        },
+      });
+      if (!confirmed) {
+        savePurchaseButton.focus();
+        return;
+      }
 
-    if (!success) {
-      return;
+      const success = await SaveCheckout();
+      if (success) CloseCheckoutModal();
+    } finally {
+      savePurchaseButton.disabled = false;
     }
-
-    CloseCheckoutModal();
   });
 }
 

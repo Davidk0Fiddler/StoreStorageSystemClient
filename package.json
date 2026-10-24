@@ -2,9 +2,17 @@
   "name": "storestoragesystemclient",
   "version": "1.0.0",
   "description": "Electron desktop client for the store storage management system (POS, stock, statistics)",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Davidk0Fiddler/StoreStorageSystemClient.git"
+  },
   "main": "main.js",
   "scripts": {
-    "start": "electron ."
+    "start": "electron .",
+    "build:win": "node scripts/write-release-config.cjs && electron-builder --win nsis --x64",
+    "release:win": "node scripts/write-release-config.cjs && electron-builder --win nsis --x64 --publish always",
+    "test": "node --test",
+    "test:ui": "node tests/electron-ui-smoke.cjs"
   },
   "keywords": [],
   "author": "",
@@ -13,9 +21,45 @@
   "dependencies": {
     "bootstrap": "^5.3.8",
     "bootstrap-icons": "^1.13.1",
-    "dotenv": "^17.4.2"
+    "dotenv": "^17.4.2",
+    "electron-updater": "^6.8.11"
+  },
+  "build": {
+    "appId": "hu.storestoragesystem.client",
+    "productName": "Store Storage System",
+    "directories": {
+      "output": "release"
+    },
+    "extraResources": [
+      {
+        "from": "release-config.json",
+        "to": "release-config.json"
+      }
+    ],
+    "publish": [
+      {
+        "provider": "github",
+        "owner": "Davidk0Fiddler",
+        "repo": "StoreStorageSystemClient"
+      }
+    ],
+    "win": {
+      "verifyUpdateCodeSignature": false,
+      "target": [
+        {
+          "target": "nsis",
+          "arch": ["x64"]
+        }
+      ]
+    },
+    "nsis": {
+      "oneClick": true,
+      "perMachine": false,
+      "deleteAppDataOnUninstall": false
+    }
   },
   "devDependencies": {
-    "electron": "^42.4.0"
+    "electron": "^42.4.0",
+    "electron-builder": "^26.18.0"
   }
 }
