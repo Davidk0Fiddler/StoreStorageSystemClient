@@ -1,6 +1,6 @@
 {
   "name": "storestoragesystemclient",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Electron desktop client for the store storage management system (POS, stock, statistics)",
   "repository": {
     "type": "git",
@@ -12,7 +12,8 @@
     "build:win": "node scripts/write-release-config.cjs && electron-builder --win nsis --x64",
     "release:win": "node scripts/write-release-config.cjs && electron-builder --win nsis --x64 --publish always",
     "test": "node --test",
-    "test:ui": "node tests/electron-ui-smoke.cjs"
+    "test:ui": "node tests/electron-ui-smoke.cjs",
+    "test:ui:panels": "node tests/electron-panels-smoke.cjs"
   },
   "keywords": [],
   "author": "",
@@ -44,11 +45,14 @@
       }
     ],
     "win": {
+      "icon": "assets/icon.png",
       "verifyUpdateCodeSignature": false,
       "target": [
         {
           "target": "nsis",
-          "arch": ["x64"]
+          "arch": [
+            "x64"
+          ]
         }
       ]
     },

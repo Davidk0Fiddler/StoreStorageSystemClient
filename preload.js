@@ -1,19 +1,18 @@
 const { contextBridge, ipcRenderer } = require("electron");
-const fs = require("fs");
-const path = require("path");
-
-let packagedApiUrl = "";
+const apiUrlArgument = process.argv.find((argument) =>
+  argument.startsWith("--store-api-url="),
+);
+let apiUrl = "";
 try {
-  const configPath = path.join(process.resourcesPath, "release-config.json");
-  packagedApiUrl = JSON.parse(fs.readFileSync(configPath, "utf8")).API_URL || "";
+  apiUrl = decodeURIComponent(apiUrlArgument?.slice("--store-api-url=".length) || "");
 } catch {
-  // Development uses the API_URL loaded from the local .env file.
+  // A hibás argumentum esetén üres API-címmel indul az alkalmazás.
 }
 
 contextBridge.exposeInMainWorld(
   "config",
   Object.freeze({
-    API_URL: packagedApiUrl || process.env.API_URL,
+    API_URL: apiUrl,
   }),
 );
 

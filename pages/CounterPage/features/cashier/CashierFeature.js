@@ -3,6 +3,9 @@ import { EscapeHtml } from "../../../shared/Html.js";
 import {
   GetIsCashRegisterMode,
   SetIsCashRegisterMode,
+  GetBuyerAgeStatus,
+  SetBuyerAgeStatus,
+  ResetBuyerAgeStatus,
 } from "./CashierState.js";
 
 import { GetAllProductsForCashier } from "./CashierService.js";
@@ -39,7 +42,6 @@ let barcodeBuffer = "";
 
 let isInitialized = false;
 let isBarcodeListenerInitialized = false;
-let buyerAgeStatus = null;
 
 function productCanBePurchasedByMinors(product) {
   const value = product?.canBePurchasedByMinors;
@@ -47,6 +49,7 @@ function productCanBePurchasedByMinors(product) {
 }
 
 async function EnsureBuyerCanPurchase(product) {
+  const buyerAgeStatus = GetBuyerAgeStatus();
   if (productCanBePurchasedByMinors(product) || buyerAgeStatus === "adult") return true;
   if (buyerAgeStatus === "minor") {
     DisplayAlert("danger", "A kiskorú vásárló ezt a terméket nem vásárolhatja meg.");
@@ -54,11 +57,11 @@ async function EnsureBuyerCanPurchase(product) {
   }
   const decision = await AskBuyerAge();
   if (decision === "adult") {
-    buyerAgeStatus = "adult";
+    SetBuyerAgeStatus("adult");
     return true;
   }
   if (decision === "minor") {
-    buyerAgeStatus = "minor";
+    SetBuyerAgeStatus("minor");
     DisplayAlert("danger", "A kiskorú vásárló ezt a terméket nem vásárolhatja meg.");
   }
   return false;
@@ -336,7 +339,7 @@ function InitializeCashRegisterCloseEvent() {
 
   modalElement.addEventListener("hidden.bs.modal", () => {
     SetIsCashRegisterMode(false);
-    buyerAgeStatus = null;
+    ResetBuyerAgeStatus();
     barcodeBuffer = "";
   });
   modalElement.addEventListener("shown.bs.modal", () => {
@@ -360,7 +363,7 @@ export function InitializeCashier() {
 
 export async function OpenCashRegister() {
   InitializeCashier();
-  buyerAgeStatus = null;
+  ResetBuyerAgeStatus();
   barcodeBuffer = "";
 
   const loaded = await LoadCashierProducts();
@@ -376,7 +379,7 @@ export async function OpenCashRegister() {
 
 export function CloseCashRegister() {
   SetIsCashRegisterMode(false);
-  buyerAgeStatus = null;
+  ResetBuyerAgeStatus();
 }
 
 export function OpenProductSearch() {

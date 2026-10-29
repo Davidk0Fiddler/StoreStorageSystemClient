@@ -133,6 +133,12 @@ export function InitializeStockDetailsModal() {
 }
 
 export function OpenUpdateShopQuantityModal() {
+  const roleName = sessionStorage.getItem("roleName");
+  if (roleName !== "Admin" && roleName !== "Storage") {
+    DisplayStockAlert("danger", "Nincs jogosultságod a bolti mennyiség módosításához.");
+    return;
+  }
+
   const stock = GetSelectedStock();
 
   if (!stock) {
@@ -154,6 +160,14 @@ export function OpenUpdateShopQuantityModal() {
   document.getElementById("change-shop-quantity-new").value =
     stock.shopQuantity;
 
+  const helpText = document.getElementById("change-shop-quantity-help");
+  if (helpText) {
+    helpText.textContent =
+      roleName === "Admin"
+        ? "A bolti mennyiség növelhető és csökkenthető."
+        : "A bolti mennyiséget csökkenteni csak Admin jogosultsággal lehet.";
+  }
+
   bootstrap.Modal.getOrCreateInstance(modalElement).show();
 }
 
@@ -167,6 +181,12 @@ export function InitializeStockShopQuantityModal() {
     ?.addEventListener("click", OpenUpdateShopQuantityModal);
 
   saveButton?.addEventListener("click", async () => {
+    const roleName = sessionStorage.getItem("roleName");
+    if (roleName !== "Admin" && roleName !== "Storage") {
+      DisplayStockAlert("danger", "Nincs jogosultságod a bolti mennyiség módosításához.");
+      return;
+    }
+
     const stock = GetSelectedStock();
 
     if (!stock) {
@@ -180,6 +200,14 @@ export function InitializeStockShopQuantityModal() {
 
     if (!Number.isFinite(shopQuantity) || shopQuantity < 0) {
       DisplayStockAlert("danger", "Adj meg egy érvényes mennyiséget!");
+      return;
+    }
+
+    if (roleName !== "Admin" && shopQuantity < Number(stock.shopQuantity)) {
+      DisplayStockAlert(
+        "danger",
+        "A bolti mennyiség csökkentéséhez Admin jogosultság szükséges.",
+      );
       return;
     }
 

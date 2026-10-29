@@ -34,6 +34,7 @@ import {
 } from "../ui/UserModal.js";
 
 import { DisplayAlert } from "../../shared/Alert.js";
+import { IsProtectedAdministratorProfile } from "../../shared/ProfilePolicy.js";
 
 let users = [];
 
@@ -49,7 +50,7 @@ async function LoadUsers() {
     return false;
   }
 
-  users = result;
+  users = result.filter((user) => !IsProtectedAdministratorProfile(user));
 
   UpdateUserCounts(users);
   RenderCurrentFilter();
@@ -197,6 +198,8 @@ function InitializeUserCardEvents() {
  * Felhasználó aktiválása
  */
 async function ActivateSelectedUser(username) {
+  if (IsProtectedAdministratorProfile(username)) return;
+
   const response = await ActivateUser(username);
 
   if (!response.success) {
@@ -213,6 +216,8 @@ async function ActivateSelectedUser(username) {
  * Felhasználó deaktiválása
  */
 async function DeactivateSelectedUser(username) {
+  if (IsProtectedAdministratorProfile(username)) return;
+
   const response = await DeactivateUser(username);
 
   if (!response.success) {
@@ -231,7 +236,7 @@ async function DeactivateSelectedUser(username) {
 async function OpenUserUpdate(username) {
   const user = users.find((item) => item.userName === username);
 
-  if (!user) {
+  if (!user || IsProtectedAdministratorProfile(user)) {
     return;
   }
 
@@ -307,6 +312,11 @@ async function HandleUpdateUser() {
   const selectedUserName = GetSelectedUserName();
 
   if (!selectedUserName) {
+    return;
+  }
+
+  if (IsProtectedAdministratorProfile(selectedUserName)) {
+    DisplayAlert("danger", "Az Administrator profil nem módosítható.");
     return;
   }
 

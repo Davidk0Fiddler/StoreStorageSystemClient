@@ -1,10 +1,28 @@
 const { app, BrowserWindow, ipcMain } = require("electron");
 const { autoUpdater } = require("electron-updater");
+const fs = require("fs");
 const path = require("path");
 
 require("dotenv").config();
 
 const canUpdate = () => app.isPackaged && process.platform === "win32";
+
+function getApiUrl() {
+  if (app.isPackaged) {
+    try {
+      const configPath = path.join(
+        process.resourcesPath,
+        "release-config.json",
+      );
+      const config = JSON.parse(fs.readFileSync(configPath, "utf8"));
+      if (typeof config.API_URL === "string") return config.API_URL;
+    } catch (error) {
+      console.error("A kiadási API-konfiguráció nem olvasható be:", error);
+    }
+  }
+
+  return process.env.API_URL || "";
+}
 
 let mainWindow = null;
 let updateState = {
@@ -69,7 +87,11 @@ autoUpdater.on("download-progress", (progress) => {
 });
 
 autoUpdater.on("update-downloaded", (info) => {
-  publishUpdateState({ phase: "downloaded", version: info.version, percent: 100 });
+  publishUpdateState({
+    phase: "downloaded",
+    version: info.version,
+    percent: 100,
+  });
   setTimeout(() => autoUpdater.quitAndInstall(true, true), 900);
 });
 
@@ -86,6 +108,9 @@ function createWindow() {
       preload: path.join(__dirname, "preload.js"),
       contextIsolation: true,
       nodeIntegration: false,
+      additionalArguments: [
+        `--store-api-url=${encodeURIComponent(getApiUrl())}`,
+      ],
     },
     icon: path.join(__dirname, "assets", "icon.png"),
   });
@@ -97,7 +122,10 @@ function createWindow() {
   });
 
   mainWindow.webContents.on("before-input-event", (event, input) => {
-    if (input.key === "F12" || (input.control && input.shift && input.key.toLowerCase() === "i")) {
+    if (
+      input.key === "F12" ||
+      (input.control && input.shift && input.key.toLowerCase() === "i")
+    ) {
       event.preventDefault();
     }
   });

@@ -9,6 +9,7 @@ import {
 } from "./CartService.js";
 
 import { CheckProductAvailability } from "../cashier/CashierService.js";
+import { ResetBuyerAgeStatus } from "../cashier/CashierState.js";
 
 import { CreateCartItem } from "../../ui/cart/CartItem.js";
 
@@ -21,6 +22,12 @@ import {
 import { RenderCartSummary } from "../../ui/cart/CartSummary.js";
 
 import { DisplayAlert } from "../../../shared/Alert.js";
+
+function ResetBuyerAgeStatusIfCartIsEmpty() {
+  if (GetCartProducts().length === 0) {
+    ResetBuyerAgeStatus();
+  }
+}
 
 function RenderCartEmptyState() {
   const emptyCart = GetEmptyCartArea();
@@ -64,6 +71,7 @@ function HandleRemoveProduct(event) {
   const { index } = event.detail;
 
   RemoveProductFromCart(index);
+  ResetBuyerAgeStatusIfCartIsEmpty();
 
   RenderCart();
 }
@@ -81,6 +89,7 @@ function HandleDecreaseQuantity(event) {
   const amount = selectedProduct.product.productSize === "db" ? 1 : 0.05;
 
   DecreaseProductQuantity(index, amount);
+  ResetBuyerAgeStatusIfCartIsEmpty();
 
   RenderCart();
 }
@@ -180,12 +189,14 @@ export async function AddToCart(product, quantity) {
 
 export function RemoveFromCart(index) {
   RemoveProductFromCart(index);
+  ResetBuyerAgeStatusIfCartIsEmpty();
 
   RenderCart();
 }
 
 export function ClearSelectedProducts() {
   ClearCart();
+  ResetBuyerAgeStatusIfCartIsEmpty();
 
   RenderCart();
 }
@@ -204,6 +215,7 @@ export function IncreaseQuantity(index, amount = 1) {
 
 export function DecreaseQuantity(index, amount = 1) {
   DecreaseProductQuantity(index, amount);
+  ResetBuyerAgeStatusIfCartIsEmpty();
 
   RenderCart();
 }

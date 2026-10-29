@@ -14,8 +14,11 @@ talking to a separate backend API.
 - **Statisztika** – daily / weekly / monthly / yearly income charts (Chart.js),
   top products, brand breakdown, transactions and VAT.
 - **Admin Panel** – külön Admin Page a kritikus termék-, áru- és profilműveletekhez,
-  valamint a shop-, audit- és készletmozgási naplókhoz. A szükséges backend
-  szerződés az `ADMIN_PANEL_BACKEND_API.md` fájlban található.
+  valamint a shop-, audit- és készletmozgási naplókhoz.
+- **Felhasználói kézikönyvek** – dolgozói és adminisztrátori Word-útmutató a
+  `docs/felhasznaloi-utmutatok/` mappában.
+- **Windows kiadás és frissítés** – beállítási és kiadási lépések a
+  `RELEASING.md` fájlban.
 
 ## Tech stack
 

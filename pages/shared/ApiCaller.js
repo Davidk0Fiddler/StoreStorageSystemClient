@@ -13,11 +13,11 @@ export function GetRequestFailureMessage(status, value) {
   const message =
     typeof value === "string"
       ? value
-      : value?.message ??
+      : (value?.message ??
         value?.errorMessage ??
         value?.error ??
         value?.detail ??
-        value?.title;
+        value?.title);
 
   return typeof message === "string" && networkErrorPattern.test(message.trim())
     ? SERVER_UNAVAILABLE_MESSAGE
@@ -81,7 +81,10 @@ export async function API_CALL(
           onUploadProgress({
             loaded: event.loaded,
             total: event.total,
-            percent: Math.min(100, Math.round((event.loaded / event.total) * 100)),
+            percent: Math.min(
+              100,
+              Math.round((event.loaded / event.total) * 100),
+            ),
           });
         } catch (error) {
           console.error("Upload progress callback failed:", error);

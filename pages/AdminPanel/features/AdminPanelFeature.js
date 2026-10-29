@@ -16,6 +16,7 @@ import {
   RenderStockDocumentList,
   RenderStockDocumentViewer,
 } from "../ui/StockDocumentsUI.js";
+import { IsProtectedAdministratorProfile } from "../../shared/ProfilePolicy.js";
 
 const root = document.getElementById("admin-panel-root");
 const pageSize = 25;
@@ -89,7 +90,9 @@ async function loadPanel() {
     state.items = [];
     state.error = result.error;
   } else {
-    state.items = result.data;
+    state.items = state.panel === "profiles"
+      ? result.data.filter((profile) => !IsProtectedAdministratorProfile(profile))
+      : result.data;
   }
   render();
 }
@@ -377,6 +380,10 @@ function valuesFromForm(form) {
 async function saveEdit(form) {
   const kind = form.dataset.adminKind;
   const identity = form.dataset.adminId;
+  if (kind === "profiles" && IsProtectedAdministratorProfile(identity)) {
+    showAdminNotice("danger", "A profil nem módosítható", "Az Administrator profil védett rendszerprofil.");
+    return;
+  }
   const pendingProductImage = kind === "products"
     ? form.querySelector("[data-admin-product-image]")?.files?.[0]
     : null;
@@ -549,6 +556,10 @@ async function uploadAdminProductImage(button) {
 
 async function toggleActive(button) {
   const identity = button.dataset.adminToggle;
+  if (state.panel === "profiles" && IsProtectedAdministratorProfile(identity)) {
+    showAdminNotice("danger", "A profil státusza nem módosítható", "Az Administrator profil védett rendszerprofil.");
+    return;
+  }
   const currentlyActive = button.dataset.adminActive === "true";
   const item = getPanelItem(identity);
   const label = item?.productName ?? item?.product?.productName ?? item?.userName ?? identity;

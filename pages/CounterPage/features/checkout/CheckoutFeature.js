@@ -27,6 +27,7 @@ import { ClearSelectedProducts } from "../cart/CartFeature.js";
 
 import { DisplayAlert } from "../../../shared/Alert.js";
 import { AskCashRegisterAmountConfirmation } from "../../ui/checkout/CashRegisterReminder.js";
+import { ResetBuyerAgeStatus } from "../cashier/CashierState.js";
 
 function GetCurrentDateTime() {
   const now = new Date();
@@ -190,6 +191,7 @@ export async function SaveCheckout() {
 
   DisplayAlert("success", "Sikeres mentés!");
 
+  ResetBuyerAgeStatus();
   ClearSelectedProducts();
   ClearCheckoutData();
 
