@@ -41,7 +41,8 @@
       {
         "provider": "github",
         "owner": "Davidk0Fiddler",
-        "repo": "StoreStorageSystemClient"
+        "repo": "StoreStorageSystemClient",
+        "releaseType": "release"
       }
     ],
     "win": {
